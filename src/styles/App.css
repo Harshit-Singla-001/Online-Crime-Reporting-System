@@ -400,3 +400,13 @@ body {
 .captcha-refresh:hover {
   transform: rotate(45deg);
 }
+
+/* Custom Text Readability Overrides */
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+.text-secondary {
+  color: var(--color-text-muted) !important;
+}
+

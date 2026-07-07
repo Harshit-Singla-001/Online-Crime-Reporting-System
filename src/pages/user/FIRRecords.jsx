@@ -257,8 +257,8 @@ const FIRRecords = () => {
       )}
 
       {/* Report Modal */}
-      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered>
-        <Modal.Header className="modal-header-glass text-light">
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)} centered contentClassName="modal-content-glass">
+        <Modal.Header closeButton closeVariant="white" className="modal-header-glass text-light">
           <Modal.Title className="fw-bold d-flex align-items-center gap-2">
             <RiFlagLine className="text-danger" /> Flag Public Report
           </Modal.Title>

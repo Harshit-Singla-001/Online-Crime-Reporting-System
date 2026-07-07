@@ -15,13 +15,27 @@ const app = express();
 // Connect to Database
 connectDB().then(() => {
   // Seed initial Admin accounts if empty
-  seedAdmin();
+  seedAdmin().then(() => {
+    // Seed initial sample data if empty
+    const { seedSampleData } = require('./utils/seedData');
+    seedSampleData();
+  });
 });
 
 // CORS middleware configurations
-const frontendOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
+const frontendOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175'
+];
 app.use(cors({
-  origin: frontendOrigin,
+  origin: function (origin, callback) {
+    if (!origin || frontendOrigins.indexOf(origin) !== -1 || origin.startsWith('http://localhost:')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

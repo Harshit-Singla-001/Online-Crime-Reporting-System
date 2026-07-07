@@ -27,9 +27,16 @@ const reportSchema = new mongoose.Schema({
 // Custom validation to ensure at least one target is defined
 reportSchema.pre('validate', function(next) {
   if (!this.user_id && !this.fir_id) {
-    next(new Error('At least one of user_id or fir_id must be present'));
+    const err = new Error('At least one of user_id or fir_id must be present');
+    if (typeof next === 'function') {
+      next(err);
+    } else {
+      throw err;
+    }
   } else {
-    next();
+    if (typeof next === 'function') {
+      next();
+    }
   }
 });
 

@@ -85,7 +85,9 @@ firRecordSchema.pre('validate', function(next) {
       this.priority = 'Low';
     }
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 // Indexes

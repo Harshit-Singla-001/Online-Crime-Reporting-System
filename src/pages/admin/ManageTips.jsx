@@ -236,12 +236,11 @@ const ManageTips = () => {
       )}
 
       {/* Add/Edit Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
-        <Modal.Header className="modal-header-glass text-light justify-content-between">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg" contentClassName="modal-content-glass">
+        <Modal.Header closeButton closeVariant="white" className="modal-header-glass text-light justify-content-between">
           <Modal.Title className="fw-bold">
             {editingTip ? 'Update Safety Awareness Tip' : 'Publish New Safety Awareness Tip'}
           </Modal.Title>
-          <Button variant="close" onClick={() => setShowModal(false)} variant="dark"></Button>
         </Modal.Header>
         <Form onSubmit={handleFormSubmit}>
           <Modal.Body className="modal-body-glass text-light text-start">

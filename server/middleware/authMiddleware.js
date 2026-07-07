@@ -31,8 +31,15 @@ const protect = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Check if user still exists and is active
-    const user = await User.findById(decoded.user_id);
+    // Check if user/staff still exists and is active
+    let user;
+    if (decoded.role === 'admin') {
+      const Staff = require('../models/Staff');
+      user = await Staff.findById(decoded.user_id);
+    } else {
+      user = await User.findById(decoded.user_id);
+    }
+
     if (!user) {
       return res.status(401).json({ message: 'User no longer exists' });
     }
@@ -71,7 +78,13 @@ const optionalProtect = async (req, res, next) => {
     }
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.user_id);
+      let user;
+      if (decoded.role === 'admin') {
+        const Staff = require('../models/Staff');
+        user = await Staff.findById(decoded.user_id);
+      } else {
+        user = await User.findById(decoded.user_id);
+      }
       if (user && user.status !== 'suspended' && user.status !== 'blocked') {
         req.user = user;
       }

@@ -80,6 +80,16 @@ const AdminProfile = () => {
     );
   }
 
+  if (!admin) {
+    return (
+      <Container className="py-5 text-center" style={{ minHeight: '80vh' }}>
+        <Alert variant="danger" className="mx-auto" style={{ maxWidth: '600px' }}>
+          {error || 'Failed to load administrative profile credentials.'}
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container className="py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
       <div className="mb-4 text-start">

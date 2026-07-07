@@ -88,9 +88,7 @@ exports.signupStep1 = async (req, res) => {
       return res.status(400).json({ message: 'Aadhaar number is required.' });
     }
 
-    if (age >= 18 && !pan_number) {
-      return res.status(400).json({ message: 'PAN number is required for users 18 or older.' });
-    }
+
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -110,7 +108,7 @@ exports.signupStep1 = async (req, res) => {
       phone_number,
       email,
       aadhaar_number,
-      pan_number: age >= 18 ? pan_number : null,
+      pan_number: age >= 18 ? (pan_number || null) : null,
       otp,
       age
     };

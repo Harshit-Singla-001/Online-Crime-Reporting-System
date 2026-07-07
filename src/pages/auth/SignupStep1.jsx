@@ -59,12 +59,7 @@ const SignupStep1 = () => {
         aadhaar_number: formData.aadhaar_number,
       };
 
-      if (age >= 18) {
-        if (!formData.pan_number) {
-          setError('PAN number is required for users aged 18 and older.');
-          setLoading(false);
-          return;
-        }
+      if (age >= 18 && formData.pan_number) {
         submitData.pan_number = formData.pan_number;
       }
 
@@ -226,7 +221,6 @@ const SignupStep1 = () => {
                     value={formData.pan_number}
                     onChange={handleChange}
                     className="input-custom"
-                    required
                   />
                 </Form.Group>
               </Col>

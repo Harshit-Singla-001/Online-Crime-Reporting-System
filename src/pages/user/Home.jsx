@@ -98,7 +98,7 @@ const Home = () => {
   return (
     <Container className="py-4 animate-fade-in">
       {/* Disclaimer Modal */}
-      <Modal show={showDisclaimer} onHide={() => {}} backdrop="static" keyboard={false} centered>
+      <Modal show={showDisclaimer} onHide={() => {}} backdrop="static" keyboard={false} centered contentClassName="modal-content-glass">
         <Modal.Header className="modal-header-glass text-light justify-content-center">
           <Modal.Title className="fw-bold d-flex align-items-center gap-2">
             <RiAlertLine className="text-warning" size={28} /> Educational Disclaimer

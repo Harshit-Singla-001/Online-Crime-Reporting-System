@@ -71,11 +71,7 @@ const AppNavbar = () => {
                     <RiUser3Line /> My Profile
                   </NavDropdown.Item>
                   
-                  {isAdmin && (
-                    <NavDropdown.Item as={Link} to="/admin/settings" className="d-flex align-items-center gap-2 py-2">
-                      <RiSettings4Line /> Site Settings
-                    </NavDropdown.Item>
-                  )}
+
                   
                   <NavDropdown.Divider />
                   
