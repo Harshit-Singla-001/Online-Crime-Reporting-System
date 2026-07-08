@@ -410,3 +410,24 @@ body {
   color: var(--color-text-muted) !important;
 }
 
+/* Accordion Contrast Overrides */
+.crs-accordion-custom .accordion-button:not(.collapsed) {
+  background-color: #ffffff !important;
+  color: #1e3a8a !important; /* Dark Blue */
+  box-shadow: none !important;
+}
+
+.crs-accordion-custom .accordion-button:not(.collapsed) span {
+  color: #1e3a8a !important; /* Dark Blue */
+}
+
+.crs-accordion-custom .accordion-button.collapsed {
+  background-color: transparent !important;
+  color: #f8f9fa !important;
+}
+
+.crs-accordion-custom .accordion-button.collapsed span {
+  color: #f8f9fa !important;
+}
+
+

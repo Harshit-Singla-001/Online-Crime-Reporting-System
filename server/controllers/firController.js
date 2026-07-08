@@ -5,6 +5,7 @@ const FIRRecord = require('../models/FIRRecord');
 const FIRPublicRecord = require('../models/FIRPublicRecord');
 const Report = require('../models/Report');
 const User = require('../models/User');
+const { sendEmail } = require('../utils/mailer');
 
 // Configure Multer for evidence upload (max 3 images)
 const uploadDir = path.join(__dirname, '../uploads');
@@ -64,6 +65,29 @@ exports.fileFIR = (req, res) => {
         return res.status(400).json({ message: 'All required fields must be filled.' });
       }
 
+      // Silent geolocation verification
+      const { geolocation_supported, geolocation_permission } = req.body;
+      if (geolocation_supported === 'true' && geolocation_permission === 'denied') {
+        return res.status(400).json({ message: 'FIR submission failed. Geolocation permission is required to verify the incident origin.' });
+      }
+
+      // Validate Incident Date calendar year
+      const year = new Date(incident_date).getFullYear();
+      if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
+        return res.status(400).json({ message: 'Please enter a valid calendar year for the incident date.' });
+      }
+
+      // Combine incident date & time to compare with current filing time
+      const incidentDatetime = new Date(incident_date);
+      const [hours, minutes] = incident_time.split(':');
+      incidentDatetime.setHours(parseInt(hours) || 0);
+      incidentDatetime.setMinutes(parseInt(minutes) || 0);
+
+      const filingTime = new Date();
+      if (incidentDatetime >= filingTime) {
+        return res.status(400).json({ message: 'Crime incident date and time must be before the FIR filing time.' });
+      }
+
       if (declaration !== 'true' && declaration !== true) {
         return res.status(400).json({ message: 'You must check the declaration box.' });
       }
@@ -92,7 +116,6 @@ exports.fileFIR = (req, res) => {
 
       // Combine incident date & time for public record
       const datetime = new Date(incident_date);
-      const [hours, minutes] = incident_time.split(':');
       datetime.setHours(parseInt(hours) || 0);
       datetime.setMinutes(parseInt(minutes) || 0);
 
@@ -107,6 +130,20 @@ exports.fileFIR = (req, res) => {
         description: shortSummary,
         admin_review: null
       });
+
+      // Send email notification to user
+      const userEmail = req.user.email;
+      const userName = req.user.full_name;
+      const emailSubject = `FIR Submission: ${fir.title}`;
+      const emailBody = `Dear ${userName},\n\nYour fir ${fir.title} is filed and currently in pending to review.\n\nBest Regards,\nOnline Crime Reporting System Team`;
+
+      try {
+        if (userEmail && userEmail.toLowerCase() !== 'harshitsingla72@gmail.com' && userEmail !== process.env.EMAIL_USER) {
+          await sendEmail(userEmail, emailSubject, emailBody);
+        }
+      } catch (emailErr) {
+        console.error('Failed to send FIR filing notification email:', emailErr);
+      }
 
       res.status(201).json({
         message: 'FIR filed successfully.',

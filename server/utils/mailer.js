@@ -16,6 +16,12 @@ const transporter = nodemailer.createTransport({
  * @param {string} html HTML content (optional)
  */
 const sendEmail = async (to, subject, text, html = '') => {
+  // Safeguard: Block status emails to the system email address
+  if (subject.toLowerCase().includes('status') && (to.toLowerCase() === 'harshitsingla72@gmail.com' || to === process.env.EMAIL_USER)) {
+    console.log(`Bypassed sending status email to ${to}`);
+    return null;
+  }
+
   try {
     const mailOptions = {
       from: `"Online Crime Reporting System" <${process.env.EMAIL_USER}>`,

@@ -159,7 +159,7 @@ const FIRRecords = () => {
             </Col>
 
             <Col lg={2} md={6} className="d-grid">
-              <Button type="submit" className="btn-grad w-100" style={{ height: '48px' }}>
+              <Button type="submit" className="btn-grad w-100 d-flex align-items-center justify-content-center" style={{ height: '48px', padding: 0 }}>
                 Apply Filters
               </Button>
             </Col>
@@ -181,56 +181,59 @@ const FIRRecords = () => {
           <p className="text-muted">Adjust categories or search keywords and try again.</p>
         </Card>
       ) : (
-        <div className="d-flex flex-column gap-3">
+        <Row className="g-3">
           {records.map((record) => (
-            <Card 
-              key={record._id}
-              onClick={() => navigate(`/user/fir/fir-details/${record._id}`)}
-              className="crs-card w-100 text-start hover-zoom"
-              style={{ cursor: 'pointer' }}
-            >
-              <Card.Body className="p-4 d-flex flex-column md-flex-row justify-content-between align-items-md-center gap-3">
-                <div className="flex-grow-1">
-                  <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-                    <span className="badge-status badge-approved text-uppercase" style={{ fontSize: '0.7rem' }}>
-                      {record.category}
-                    </span>
-                    <span className={`badge-status badge-${record.status.toLowerCase()}`} style={{ fontSize: '0.7rem' }}>
-                      {record.status}
-                    </span>
+            <Col md={6} key={record._id} className="d-flex">
+              <Card 
+                onClick={() => navigate(`/user/fir/fir-details/${record._id}`)}
+                className="crs-card w-100 text-start hover-zoom h-100 d-flex flex-column justify-content-between"
+                style={{ cursor: 'pointer' }}
+              >
+                <Card.Body className="p-4 d-flex flex-column justify-content-between h-100">
+                  <div className="flex-grow-1">
+                    <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+                      <span className="badge-status badge-approved text-uppercase" style={{ fontSize: '0.7rem' }}>
+                        {record.category}
+                      </span>
+                      <span className={`badge-status badge-${record.status.toLowerCase()}`} style={{ fontSize: '0.7rem' }}>
+                        {record.status}
+                      </span>
+                    </div>
+                    
+                    <h4 className="text-light fw-bold mb-2">Incident in {record.city}</h4>
+                    
+                    <p className="text-muted mb-0 font-sans" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
+                      {record.description}
+                    </p>
                   </div>
-                  
-                  <h4 className="text-light fw-bold mb-2">Incident in {record.city}</h4>
-                  
-                  <p className="text-muted mb-0 font-sans" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
-                    {record.description}
-                  </p>
-                </div>
 
-                <div className="flex-shrink-0 d-flex flex-column align-items-md-end gap-2" style={{ minWidth: '160px' }}>
-                  <div className="d-flex align-items-center gap-1 text-muted" style={{ fontSize: '0.85rem' }}>
-                    <RiCalendarEventLine className="text-info" />
-                    <span>{new Date(record.incident_datetime).toLocaleDateString()}</span>
+                  <div className="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                    <div className="d-flex flex-column gap-1">
+                      <div className="d-flex align-items-center gap-1 text-muted" style={{ fontSize: '0.85rem' }}>
+                        <RiCalendarEventLine className="text-info" />
+                        <span>{new Date(record.incident_datetime).toLocaleDateString()}</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-1 text-muted" style={{ fontSize: '0.85rem' }}>
+                        <RiMapPinLine className="text-info" />
+                        <span>{record.city}</span>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      size="sm" 
+                      variant="outline-danger"
+                      onClick={(e) => handleOpenReportModal(e, record.fir_id)}
+                      className="d-flex align-items-center gap-1"
+                      style={{ fontSize: '0.75rem' }}
+                    >
+                      <RiFlagLine /> Report Record
+                    </Button>
                   </div>
-                  <div className="d-flex align-items-center gap-1 text-muted mb-2" style={{ fontSize: '0.85rem' }}>
-                    <RiMapPinLine className="text-info" />
-                    <span>{record.city}</span>
-                  </div>
-                  
-                  <Button 
-                    size="sm" 
-                    variant="outline-danger"
-                    onClick={(e) => handleOpenReportModal(e, record.fir_id)}
-                    className="d-flex align-items-center gap-1 mt-auto"
-                    style={{ fontSize: '0.75rem', alignSelf: 'start' }}
-                  >
-                    <RiFlagLine /> Report Record
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </Col>
           ))}
-        </div>
+        </Row>
       )}
 
       {/* Pagination controls */}

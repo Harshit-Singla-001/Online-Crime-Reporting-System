@@ -19,6 +19,15 @@ const ManageFIRs = () => {
     fetchFIRs();
   }, [status, category, city]);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const fetchFIRs = async () => {
     setLoading(true);
     setError('');

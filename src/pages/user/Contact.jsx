@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Form, Button, Alert, Row, Col, Card } from 'react-bootstrap';
 import { RiMailSendLine, RiContactsLine, RiUserLine, RiQuestionLine, RiMailLine } from 'react-icons/ri';
+import { useAuth } from '../../context/AuthContext';
 
 const Contact = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +16,25 @@ const Contact = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.full_name || '',
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleChange = (e) => {
     setFormData({
@@ -41,8 +62,8 @@ const Contact = () => {
       
       // Clear form
       setFormData({
-        name: '',
-        email: '',
+        name: user ? user.full_name : '',
+        email: user ? user.email : '',
         subject: '',
         message: ''
       });
@@ -83,7 +104,7 @@ const Contact = () => {
                       onChange={handleChange}
                       className="input-custom"
                       required
-                      disabled={loading}
+                      disabled={loading || !!user}
                     />
                   </Form.Group>
                 </Col>
@@ -99,7 +120,7 @@ const Contact = () => {
                       onChange={handleChange}
                       className="input-custom"
                       required
-                      disabled={loading}
+                      disabled={loading || !!user}
                     />
                   </Form.Group>
                 </Col>

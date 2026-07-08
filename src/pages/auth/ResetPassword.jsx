@@ -26,6 +26,15 @@ const ResetPassword = () => {
     setVerifiedToken(location.state.verifiedToken);
   }, [location, navigate]);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Form, Button, Alert, Row, Col, InputGroup } from 'react-bootstrap';
 import { RiUser3Line, RiCalendarLine, RiRoadMapLine, RiSmartphoneLine, RiMailLine, RiShieldUserLine } from 'react-icons/ri';
 
 const SignupStep1 = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -20,6 +21,15 @@ const SignupStep1 = () => {
   const [age, setAge] = useState(0);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const isEmailOnlyMode = location.state?.editEmailOnly || false;
+
+  // Pre-populate if redirected from OTP page (Change Email)
+  useEffect(() => {
+    if (location.state && location.state.formData) {
+      setFormData(location.state.formData);
+    }
+  }, [location.state]);
 
   // Dynamically calculate age from DOB
   useEffect(() => {
@@ -48,6 +58,55 @@ const SignupStep1 = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Name validation: Only alphabetic characters and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(formData.full_name)) {
+      setError('Name must contain only alphabetic characters and spaces.');
+      setLoading(false);
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      setLoading(false);
+      return;
+    }
+
+    // Phone validation: Exactly 10 digits
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(formData.phone_number)) {
+      setError('Phone number must be exactly 10 numeric digits.');
+      setLoading(false);
+      return;
+    }
+
+    // Age validation: Must be at least 13
+    if (age < 13) {
+      setError('You must be at least 13 years old to register.');
+      setLoading(false);
+      return;
+    }
+
+    // Aadhaar validation: Exactly 12 numeric digits
+    const aadhaarRegex = /^\d{12}$/;
+    if (!aadhaarRegex.test(formData.aadhaar_number)) {
+      setError('Aadhaar number must be exactly 12 numeric digits.');
+      setLoading(false);
+      return;
+    }
+
+    // PAN validation if age >= 18
+    if (age >= 18 && formData.pan_number) {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!panRegex.test(formData.pan_number.toUpperCase())) {
+        setError('PAN Card number must be in a valid format (e.g. ABCDE1234F).');
+        setLoading(false);
+        return;
+      }
+    }
 
     try {
       const submitData = {
@@ -103,11 +162,12 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="text"
                     name="full_name"
-                    placeholder="John Doe"
+                    placeholder="e.g. John Doe"
                     value={formData.full_name}
                     onChange={handleChange}
                     className="input-custom"
                     required
+                    readOnly={isEmailOnlyMode}
                   />
                 </InputGroup>
               </Form.Group>
@@ -127,6 +187,7 @@ const SignupStep1 = () => {
                     onChange={handleChange}
                     className="input-custom"
                     required
+                    readOnly={isEmailOnlyMode}
                   />
                 </InputGroup>
               </Form.Group>
@@ -143,11 +204,12 @@ const SignupStep1 = () => {
                 as="textarea"
                 rows={2}
                 name="address"
-                placeholder="Full address details..."
+                placeholder="e.g. 123 Main St, New Delhi"
                 value={formData.address}
                 onChange={handleChange}
                 className="input-custom rounded-start-0"
                 required
+                readOnly={isEmailOnlyMode}
               />
             </div>
           </Form.Group>
@@ -163,11 +225,12 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="tel"
                     name="phone_number"
-                    placeholder="9876543210"
+                    placeholder="e.g. 9876543210"
                     value={formData.phone_number}
                     onChange={handleChange}
                     className="input-custom"
                     required
+                    readOnly={isEmailOnlyMode}
                   />
                 </InputGroup>
               </Form.Group>
@@ -183,7 +246,7 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="email"
                     name="email"
-                    placeholder="john@example.com"
+                    placeholder="e.g. john@example.com"
                     value={formData.email}
                     onChange={handleChange}
                     className="input-custom"
@@ -201,11 +264,12 @@ const SignupStep1 = () => {
                 <Form.Control
                   type="text"
                   name="aadhaar_number"
-                  placeholder="12-digit Aadhaar"
+                  placeholder="e.g. 123456789012"
                   value={formData.aadhaar_number}
                   onChange={handleChange}
                   className="input-custom"
                   required
+                  readOnly={isEmailOnlyMode}
                 />
               </Form.Group>
             </Col>
@@ -217,10 +281,11 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="text"
                     name="pan_number"
-                    placeholder="10-character PAN"
+                    placeholder="e.g. ABCDE1234F"
                     value={formData.pan_number}
                     onChange={handleChange}
                     className="input-custom"
+                    readOnly={isEmailOnlyMode}
                   />
                 </Form.Group>
               </Col>

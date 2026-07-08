@@ -30,7 +30,7 @@ const Captcha = ({ onCaptchaChange, value, error }) => {
   const handleTextChange = (e) => {
     onCaptchaChange({
       token: undefined, // Let parent keep previous token
-      answer: e.target.value
+      answer: e.target.value.toUpperCase()
     });
   };
 
@@ -65,6 +65,7 @@ const Captcha = ({ onCaptchaChange, value, error }) => {
           value={value}
           onChange={handleTextChange}
           className={`input-custom ${error ? 'is-invalid' : ''}`}
+          style={{ textTransform: 'uppercase' }}
           required
         />
         {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}

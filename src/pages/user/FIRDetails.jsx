@@ -67,9 +67,9 @@ const FIRDetails = () => {
 
       <div className="crs-card p-4 p-md-5 mx-auto" style={{ maxWidth: '800px' }}>
         {/* Security Redaction Banner */}
-        <Alert variant="secondary" className="mb-4 d-flex align-items-center gap-3" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'var(--border-glass)' }}>
+        <Alert variant="secondary" className="mb-4 d-flex align-items-center gap-3" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'var(--border-glass)', color: '#ced4da' }}>
           <RiEyeOffLine size={32} className="text-warning flex-shrink-0" />
-          <div style={{ fontSize: '0.85rem' }}>
+          <div style={{ fontSize: '0.85rem', color: '#ced4da' }}>
             <strong>Confidentiality Notice:</strong> To protect citizen privacy, this public record has been scrubbed. Full address locations, reporter identity names, contact details, and evidence files have been redacted.
           </div>
         </Alert>

@@ -13,6 +13,18 @@ const staffSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  aadhaar_number: {
+    type: String,
+    default: ''
+  },
+  pan_number: {
+    type: String,
+    default: null
+  },
+  address: {
+    type: String,
+    default: ''
+  },
   email: {
     type: String,
     required: true,

@@ -16,8 +16,18 @@ const SiteSettings = () => {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
+    alert("This page is not completely built and it is recommended not to open or use.");
     fetchSettings();
   }, []);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const fetchSettings = async () => {
     setLoading(true);

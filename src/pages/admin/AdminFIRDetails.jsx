@@ -21,6 +21,15 @@ const AdminFIRDetails = () => {
     fetchFIRDetails();
   }, [id]);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const fetchFIRDetails = async () => {
     setLoading(true);
     setError('');
@@ -231,7 +240,7 @@ const AdminFIRDetails = () => {
                   <Col md={4} key={idx}>
                     <div className="p-1 rounded bg-black" style={{ border: '1px solid var(--border-glass)' }}>
                       <Image 
-                        src={`http://localhost:5000/${img}`}
+                        src={`http://localhost:5000${img}`}
                         alt={`Evidence ${idx + 1}`}
                         fluid 
                         rounded 

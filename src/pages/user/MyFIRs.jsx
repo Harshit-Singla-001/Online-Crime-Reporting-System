@@ -1,18 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Row, Col, Card, Badge, Button, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Button, Spinner, Alert } from 'react-bootstrap';
 import { RiFileList3Line, RiMapPinLine, RiCalendarEventLine, RiAddCircleLine } from 'react-icons/ri';
 
 const MyFIRs = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [firs, setFirs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     fetchFirs();
   }, []);
+
+  useEffect(() => {
+    if (location.state && location.state.successMessage) {
+      setSuccess(location.state.successMessage);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const fetchFirs = async () => {
     try {
@@ -54,6 +72,7 @@ const MyFIRs = () => {
 
   return (
     <Container className="py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
+      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <div>
           <h2 className="text-light fw-bold mb-1">My Filed Case Reports (FIRs)</h2>
@@ -89,9 +108,6 @@ const MyFIRs = () => {
                     <div className="d-flex justify-content-between align-items-start mb-3">
                       <span className={`badge-status badge-${getStatusClass(fir.status)}`}>
                         {fir.status}
-                      </span>
-                      <span className={`badge-priority ${getPriorityClass(fir.priority)}`}>
-                        {fir.priority} Priority
                       </span>
                     </div>
                     

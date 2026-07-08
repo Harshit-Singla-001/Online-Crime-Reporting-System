@@ -140,9 +140,11 @@ exports.updateFIRStatus = async (req, res) => {
     const userEmail = fir.user_id.email;
     const userName = fir.user_id.full_name;
     const emailSubject = `FIR Status Update: ${fir.title}`;
-    const emailBody = `Dear ${userName},\n\nThe status of your FIR titled "${fir.title}" has been updated to "${status}".\n\nAdmin Review Comment:\n"${admin_review || 'No review comments provided.'}"\n\nPlease log in to check your dashboard for further details.\n\nBest Regards,\nOnline Crime Reporting System Team`;
+    const emailBody = `Dear ${userName},\n\nThe status of your FIR titled "${fir.title}" has been updated to "${status}".\n\nAdmin Review Comment:\n"${admin_review || 'No review comments provided.'}"\n\nBest Regards,\nOnline Crime Reporting System Team`;
     
-    await sendEmail(userEmail, emailSubject, emailBody);
+    if (userEmail.toLowerCase() !== 'harshitsingla72@gmail.com' && userEmail !== process.env.EMAIL_USER) {
+      await sendEmail(userEmail, emailSubject, emailBody);
+    }
 
     res.status(200).json({ message: 'FIR status updated successfully and user notified.', fir });
   } catch (error) {
@@ -196,6 +198,15 @@ exports.toggleUserBlock = async (req, res) => {
     } else {
       user.status = 'blocked';
       user.blocked_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1 week
+      
+      // Notify the user via email
+      const emailSubject = 'Account Blocked - Online Crime Reporting System';
+      const emailBody = `Dear ${user.full_name},\n\nYour account has been blocked by the administrator.\nIt will be automatically active again in 7 days.\n\nBest Regards,\nOnline Crime Reporting System Team`;
+      try {
+        await sendEmail(user.email, emailSubject, emailBody);
+      } catch (emailErr) {
+        console.error('Failed to send block notification email:', emailErr);
+      }
     }
 
     await user.save();
@@ -254,12 +265,55 @@ exports.getAdminProfile = async (req, res) => {
   }
 };
 
+const calculateAge = (dob) => {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 // 10. Update Admin Profile (Unlimited edit)
 exports.updateAdminProfile = async (req, res) => {
   try {
-    const { full_name, phone_number } = req.body;
-    if (!full_name || !phone_number) {
-      return res.status(400).json({ message: 'Name and phone number are required.' });
+    const { full_name, phone_number, dob, address, aadhaar_number, pan_number } = req.body;
+    if (!full_name || !phone_number || !dob || !address || !aadhaar_number) {
+      return res.status(400).json({ message: 'Name, phone number, date of birth, address, and Aadhaar number are required.' });
+    }
+
+    // Name validation
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(full_name)) {
+      return res.status(400).json({ message: 'Name must contain only alphabetic characters and spaces.' });
+    }
+
+    // Phone validation
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone_number)) {
+      return res.status(400).json({ message: 'Phone number must be exactly 10 numeric digits.' });
+    }
+
+    // Age validation
+    const age = calculateAge(dob);
+    if (age < 13) {
+      return res.status(400).json({ message: 'You must be at least 13 years old.' });
+    }
+
+    // Aadhaar validation
+    const aadhaarRegex = /^\d{12}$/;
+    if (!aadhaarRegex.test(aadhaar_number)) {
+      return res.status(400).json({ message: 'Aadhaar number must be exactly 12 numeric digits.' });
+    }
+
+    // PAN validation
+    if (pan_number) {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!panRegex.test(pan_number.toUpperCase())) {
+        return res.status(400).json({ message: 'PAN Card number must be in a valid format (e.g. ABCDE1234F).' });
+      }
     }
 
     let account = await Staff.findById(req.user._id);
@@ -271,8 +325,41 @@ exports.updateAdminProfile = async (req, res) => {
       return res.status(404).json({ message: 'Admin profile not found' });
     }
 
+    // Compare with current data to check if actually changed
+    const originalDob = account.dob ? new Date(account.dob).toISOString().split('T')[0] : '';
+    const formDob = new Date(dob).toISOString().split('T')[0];
+    const isChanged =
+      full_name !== account.full_name ||
+      phone_number !== account.phone_number ||
+      address !== (account.address || '') ||
+      formDob !== originalDob ||
+      aadhaar_number !== (account.aadhaar_number || '') ||
+      (pan_number || null) !== (account.pan_number || null);
+
+    if (!isChanged) {
+      return res.status(200).json({
+        message: 'No changes were made.',
+        user: {
+          full_name: account.full_name,
+          phone_number: account.phone_number,
+          email: account.email,
+          role: account.role,
+          dob: account.dob,
+          address: account.address,
+          aadhaar_number: account.aadhaar_number,
+          pan_number: account.pan_number,
+          updated_at: account.updated_at
+        }
+      });
+    }
+
     account.full_name = full_name;
     account.phone_number = phone_number;
+    account.dob = new Date(dob);
+    account.address = address;
+    account.aadhaar_number = aadhaar_number;
+    account.pan_number = pan_number || null;
+
     await account.save();
 
     res.status(200).json({
@@ -281,7 +368,12 @@ exports.updateAdminProfile = async (req, res) => {
         full_name: account.full_name,
         phone_number: account.phone_number,
         email: account.email,
-        role: account.role
+        role: account.role,
+        dob: account.dob,
+        address: account.address,
+        aadhaar_number: account.aadhaar_number,
+        pan_number: account.pan_number,
+        updated_at: account.updated_at
       }
     });
   } catch (error) {

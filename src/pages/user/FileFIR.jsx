@@ -132,6 +132,35 @@ const FileFIR = () => {
       return;
     }
 
+    // Geolocation verification
+    if (navigator.geolocation && (geoStatus === 'error' || formData.current_address.includes('denied'))) {
+      setError('Location permission is required to file an FIR.');
+      return;
+    }
+
+    // Validate Incident Date calendar year
+    const year = new Date(formData.incident_date).getFullYear();
+    if (isNaN(year) || year < 1900 || year > new Date().getFullYear()) {
+      const msg = 'Please enter a valid calendar year for the incident date.';
+      setError(msg);
+      alert(msg);
+      return;
+    }
+
+    // Combine incident date & time to compare with current filing time
+    const incidentDatetime = new Date(formData.incident_date);
+    const [hours, minutes] = formData.incident_time.split(':');
+    incidentDatetime.setHours(parseInt(hours) || 0);
+    incidentDatetime.setMinutes(parseInt(minutes) || 0);
+
+    const filingTime = new Date();
+    if (incidentDatetime >= filingTime) {
+      const msg = 'Crime incident date and time must be before the FIR filing time.';
+      setError(msg);
+      alert(msg);
+      return;
+    }
+
     if (!formData.declaration) {
       setError('You must confirm the declaration check to file the report.');
       return;
@@ -158,6 +187,10 @@ const FileFIR = () => {
       data.append('suspect_description', formData.suspect_description);
       data.append('witness_description', formData.witness_description);
       data.append('declaration', formData.declaration);
+      
+      // Append geolocation metadata for backend validation
+      data.append('geolocation_supported', navigator.geolocation ? 'true' : 'false');
+      data.append('geolocation_permission', geoStatus === 'error' && formData.current_address.includes('denied') ? 'denied' : 'granted');
 
       selectedFiles.forEach((file) => {
         data.append('images', file);
@@ -168,7 +201,11 @@ const FileFIR = () => {
       });
 
       setLoading(false);
-      navigate('/user/fir/my-firs');
+      navigate('/user/fir/my-firs', {
+        state: {
+          successMessage: `Your fir ${formData.title} is filed and currently in pending to review`
+        }
+      });
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.message || 'Failed to submit FIR. Please check your inputs.');
@@ -401,23 +438,39 @@ const FileFIR = () => {
 
           <Form.Group className="form-group-custom">
             <div className="d-flex justify-content-between align-items-center mb-2">
-              <Form.Label className="form-label-custom mb-0">Current Device Coordinates (Auto-Fetched)</Form.Label>
-              <Button 
-                variant="link" 
-                onClick={fetchGeolocation}
-                className="p-0 text-decoration-none"
-                style={{ color: 'var(--color-secondary)', fontSize: '0.85rem' }}
-              >
-                Re-fetch
-              </Button>
+              <Form.Label className="form-label-custom mb-0">
+                {navigator.geolocation ? 'Current Device Coordinates (Auto-Fetched)' : 'Current Coordinates / Location'}
+              </Form.Label>
+              {navigator.geolocation && (
+                <Button 
+                  variant="link" 
+                  onClick={fetchGeolocation}
+                  className="p-0 text-decoration-none"
+                  style={{ color: 'var(--color-secondary)', fontSize: '0.85rem' }}
+                >
+                  Re-fetch
+                </Button>
+              )}
             </div>
             
-            <div className="geo-container">
-              <span className={`geo-dot ${geoStatus === 'loading' ? 'loading' : geoStatus === 'error' ? 'error' : ''}`} />
-              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
-                {formData.current_address}
-              </span>
-            </div>
+            {!navigator.geolocation ? (
+              <Form.Control
+                type="text"
+                name="current_address"
+                placeholder="Enter current address / coordinates manually"
+                value={formData.current_address === 'Geolocation is not supported by your browser' ? '' : formData.current_address}
+                onChange={handleFieldChange}
+                className="input-custom"
+                required
+              />
+            ) : (
+              <div className="geo-container">
+                <span className={`geo-dot ${geoStatus === 'loading' ? 'loading' : geoStatus === 'error' ? 'error' : ''}`} />
+                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
+                  {formData.current_address}
+                </span>
+              </div>
+            )}
           </Form.Group>
 
           <Form.Group className="form-group-custom">

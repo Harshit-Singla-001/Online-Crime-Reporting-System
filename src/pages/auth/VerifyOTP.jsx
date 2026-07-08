@@ -154,13 +154,42 @@ const VerifyOTP = () => {
     }
   };
 
+  const handleBackToSignup = (e) => {
+    e.preventDefault();
+    try {
+      const payloadBase64 = signupToken.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payloadBase64));
+      navigate('/auth/signup', {
+        state: {
+          formData: {
+            full_name: decodedPayload.full_name || '',
+            dob: decodedPayload.dob ? decodedPayload.dob.split('T')[0] : '',
+            address: decodedPayload.address || '',
+            phone_number: decodedPayload.phone_number || '',
+            email: decodedPayload.email || '',
+            aadhaar_number: decodedPayload.aadhaar_number || '',
+            pan_number: decodedPayload.pan_number || ''
+          },
+          editEmailOnly: true
+        }
+      });
+    } catch (err) {
+      navigate('/auth/signup');
+    }
+  };
+
   return (
     <Container className="d-flex justify-content-center align-items-center py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
       <div className="crs-card p-4 p-md-5 text-center" style={{ maxWidth: '500px', width: '100%' }}>
         <div className="mb-3 text-start">
-          <Link to="/auth/signup" className="text-decoration-none d-flex align-items-center gap-1" style={{ color: 'var(--color-secondary)', fontSize: '0.9rem' }}>
+          <Button 
+            variant="link" 
+            onClick={handleBackToSignup} 
+            className="text-decoration-none d-flex align-items-center gap-1 p-0" 
+            style={{ color: 'var(--color-secondary)', fontSize: '0.9rem' }}
+          >
             <RiArrowLeftLine /> Change Email
-          </Link>
+          </Button>
         </div>
 
         <RiMailCheckLine size={48} className="text-info mb-3" />

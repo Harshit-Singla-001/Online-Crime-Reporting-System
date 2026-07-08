@@ -17,6 +17,15 @@ const ManageUsers = () => {
     fetchUsers();
   }, [status]);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const fetchUsers = async () => {
     setLoading(true);
     setError('');

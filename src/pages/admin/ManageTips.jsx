@@ -28,6 +28,15 @@ const ManageTips = () => {
     fetchTips();
   }, [category]);
 
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   const fetchTips = async () => {
     setLoading(true);
     setError('');

@@ -114,7 +114,7 @@ const MyFIRDetails = () => {
               Case {fir.status}
             </span>
             <h2 className="text-light fw-bold mb-1">{fir.title}</h2>
-            <p className="text-muted mb-0">Category: <strong>{fir.category}</strong> | Priority: <strong className="text-info">{fir.priority}</strong></p>
+            <p className="text-muted mb-0">Category: <strong>{fir.category}</strong></p>
           </div>
           
           {fir.status === 'Pending' && !isEditing && (

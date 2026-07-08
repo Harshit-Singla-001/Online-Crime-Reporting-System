@@ -74,6 +74,24 @@ exports.signupStep1 = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Name validation: Only alphabetic characters and spaces
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(full_name)) {
+      return res.status(400).json({ message: 'Name must contain only alphabetic characters and spaces.' });
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address.' });
+    }
+
+    // Phone validation: Exactly 10 digits
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone_number)) {
+      return res.status(400).json({ message: 'Phone number must be exactly 10 numeric digits.' });
+    }
+
     // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -81,11 +99,29 @@ exports.signupStep1 = async (req, res) => {
     }
 
     const age = calculateAge(dob);
+    if (age < 13) {
+      return res.status(400).json({ message: 'You must be at least 13 years old to register.' });
+    }
+
     let aadhaar_number = req.body.aadhaar_number;
     let pan_number = req.body.pan_number;
 
     if (!aadhaar_number) {
       return res.status(400).json({ message: 'Aadhaar number is required.' });
+    }
+
+    // Aadhaar validation: Exactly 12 numeric digits
+    const aadhaarRegex = /^\d{12}$/;
+    if (!aadhaarRegex.test(aadhaar_number)) {
+      return res.status(400).json({ message: 'Aadhaar number must be exactly 12 numeric digits.' });
+    }
+
+    // PAN validation if age >= 18
+    if (age >= 18 && pan_number) {
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+      if (!panRegex.test(pan_number.toUpperCase())) {
+        return res.status(400).json({ message: 'PAN Card number must be in a valid format (e.g. ABCDE1234F).' });
+      }
     }
 
 
@@ -285,7 +321,7 @@ exports.login = async (req, res) => {
         account.status = 'active';
         account.failed_attempts = 0;
         account.blocked_until = null;
-        await account.save();
+        await account.save({ timestamps: false });
       } else {
         const timeMessage = account.blocked_until 
           ? `Try again after ${account.blocked_until.toLocaleString()}`
@@ -304,12 +340,12 @@ exports.login = async (req, res) => {
       if (account.failed_attempts >= 5) {
         account.status = 'blocked';
         account.blocked_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days block
-        await account.save();
+        await account.save({ timestamps: false });
         return res.status(403).json({ 
           message: 'Account blocked due to 5 failed login attempts. Try again after 1 week.' 
         });
       }
-      await account.save();
+      await account.save({ timestamps: false });
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
@@ -317,7 +353,7 @@ exports.login = async (req, res) => {
     account.failed_attempts = 0;
     account.blocked_until = null;
     account.last_login = new Date();
-    await account.save();
+    await account.save({ timestamps: false });
 
     // Generate JWT
     const token = jwt.sign(

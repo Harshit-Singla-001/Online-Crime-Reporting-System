@@ -76,7 +76,7 @@ const Dashboard = () => {
             <Card.Body className="d-flex justify-content-between align-items-center p-0">
               <div>
                 <span className="text-muted d-block uppercase-text mb-1" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>CASES SOLVED</span>
-                <h3 className="text-success fw-bold mb-0">{stats.solvedCases}</h3>
+                <h3 className="text-success fw-bold mb-0">{stats.solvedFIRs}</h3>
               </div>
               <div className="p-3 rounded bg-success-subtle text-success">
                 <RiCheckDoubleLine size={28} />
