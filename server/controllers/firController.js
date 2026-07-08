@@ -37,8 +37,26 @@ const upload = multer({
   }
 }).array('images', 3);
 
+const settingsFilePath = path.join(__dirname, '../config/settings.json');
+
+const readSettings = () => {
+  try {
+    if (fs.existsSync(settingsFilePath)) {
+      return JSON.parse(fs.readFileSync(settingsFilePath, 'utf-8'));
+    }
+  } catch (err) {
+    console.error('Failed to read settings in firController:', err.message);
+  }
+  return { firSubmission: true };
+};
+
 // 1. File FIR
 exports.fileFIR = (req, res) => {
+  const settings = readSettings();
+  if (settings.firSubmission === false) {
+    return res.status(403).json({ message: 'Online FIR filing is temporarily disabled by the administrator.' });
+  }
+
   upload(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ message: `Upload error: ${err.message}` });

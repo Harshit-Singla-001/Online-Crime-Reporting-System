@@ -99,7 +99,7 @@ const Contact = () => {
                     <Form.Control
                       type="text"
                       name="name"
-                      placeholder="John Doe"
+                      placeholder="Random Person"
                       value={formData.name}
                       onChange={handleChange}
                       className="input-custom"
@@ -115,7 +115,7 @@ const Contact = () => {
                     <Form.Control
                       type="email"
                       name="email"
-                      placeholder="john@example.com"
+                      placeholder="example@gmail.com"
                       value={formData.email}
                       onChange={handleChange}
                       className="input-custom"
@@ -204,7 +204,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h6 className="text-light mb-0 fw-bold">Academic Identifier</h6>
-                    <span style={{ fontSize: '0.85rem' }}>Roll Number: 2417119</span>
+                    <span style={{ fontSize: '0.85rem' }}>Passing Year: 2024–2028</span>
                   </div>
                 </div>
               </div>

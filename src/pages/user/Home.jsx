@@ -139,49 +139,83 @@ const Home = () => {
         </p>
       </div>
 
-      {/* Stats Counter Section */}
+      {/* Primary Actions Cards */}
       <Row className="justify-content-center mb-5 gy-4">
-        <Col md={4} sm={6}>
-          <div className="crs-card text-center p-4">
-            <RiFileList3Line size={38} className="text-info mb-2" />
-            <h3 className="text-light fw-bold display-6 mb-1">{stats.totalCases}</h3>
-            <p className="text-muted mb-0 uppercase-text" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
+        <Col md={5} sm={6}>
+          <Link to="/user/fir/file-fir" className="text-decoration-none text-start">
+            <div className="crs-card p-4 h-100 d-flex align-items-start gap-3 hover-zoom" style={{ borderLeft: '4px solid var(--color-primary)' }}>
+              <div className="bg-primary-light p-3 rounded-circle text-white d-flex align-items-center justify-content-center" style={{ background: 'rgba(95, 92, 235, 0.1)' }}>
+                <RiFileAddLine size={32} className="text-info" />
+              </div>
+              <div>
+                <h4 className="text-light fw-bold mb-1">File Online FIR</h4>
+                <p className="text-muted mb-0" style={{ fontSize: '0.85rem' }}>
+                  Register a secure incident report with automated device coordinate verifications.
+                </p>
+              </div>
+            </div>
+          </Link>
+        </Col>
+
+        <Col md={5} sm={6}>
+          {hasFirs ? (
+            <Link to="/user/fir/my-firs" className="text-decoration-none text-start">
+              <div className="crs-card p-4 h-100 d-flex align-items-start gap-3 hover-zoom" style={{ borderLeft: '4px solid var(--color-secondary)' }}>
+                <div className="bg-secondary-light p-3 rounded-circle text-white d-flex align-items-center justify-content-center" style={{ background: 'rgba(0, 210, 255, 0.1)' }}>
+                  <RiFileList3Line size={32} className="text-secondary" />
+                </div>
+                <div>
+                  <h4 className="text-light fw-bold mb-1">View FIR Status</h4>
+                  <p className="text-muted mb-0" style={{ fontSize: '0.85rem' }}>
+                    Track your active case reports, investigations progression, and read admin review logs.
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div className="h-100 text-start" title="You have not filed any FIR yet.">
+              <div className="crs-card p-4 h-100 d-flex align-items-start gap-3 opacity-50">
+                <div className="bg-secondary-light p-3 rounded-circle text-white d-flex align-items-center justify-content-center" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
+                  <RiFileList3Line size={32} className="text-muted" />
+                </div>
+                <div>
+                  <h4 className="text-muted fw-bold mb-1">No FIR Filed Yet</h4>
+                  <p className="text-muted mb-0" style={{ fontSize: '0.85rem' }}>
+                    Once you submit a report, you will be able to monitor status updates here.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </Col>
+      </Row>
+
+      {/* Stats Counter Section (Reduced Size) */}
+      <Row className="justify-content-center mb-5 gy-3">
+        <Col md={3} sm={5} xs={6}>
+          <div className="crs-card text-center py-2 px-3" style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="d-flex align-items-center justify-content-center gap-2">
+              <RiFileList3Line size={18} className="text-info" />
+              <span className="text-light fw-bold fs-5">{stats.totalCases}</span>
+            </div>
+            <p className="text-muted mb-0 uppercase-text" style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>
               PUBLIC INCIDENTS
             </p>
           </div>
         </Col>
         
-        <Col md={4} sm={6}>
-          <div className="crs-card text-center p-4">
-            <RiCheckDoubleLine size={38} className="text-success mb-2" />
-            <h3 className="text-light fw-bold display-6 mb-1">{stats.solvedCases}</h3>
-            <p className="text-muted mb-0 uppercase-text" style={{ fontSize: '0.8rem', letterSpacing: '1px' }}>
+        <Col md={3} sm={5} xs={6}>
+          <div className="crs-card text-center py-2 px-3" style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="d-flex align-items-center justify-content-center gap-2">
+              <RiCheckDoubleLine size={18} className="text-success" />
+              <span className="text-light fw-bold fs-5">{stats.solvedCases}</span>
+            </div>
+            <p className="text-muted mb-0 uppercase-text" style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>
               RESOLVED CASES
             </p>
           </div>
         </Col>
       </Row>
-
-      {/* Action Buttons Section */}
-      <div className="text-center mb-5">
-        <div className="d-flex flex-wrap justify-content-center gap-3">
-          <Button as={Link} to="/user/fir/file-fir" className="btn-grad py-3 px-4 d-flex align-items-center gap-2">
-            <RiFileAddLine size={20} /> File Online FIR
-          </Button>
-          
-          {hasFirs ? (
-            <Button as={Link} to="/user/fir/my-firs" className="btn-outline-custom py-3 px-4 d-flex align-items-center gap-2">
-              <RiFileList3Line size={20} /> View FIR Status
-            </Button>
-          ) : (
-            <div className="d-inline-block" title="You have not filed any FIR yet.">
-              <Button disabled className="btn-outline-custom py-3 px-4 d-flex align-items-center gap-2" style={{ opacity: '0.4' }}>
-                <RiFileList3Line size={20} /> No FIR Filed Yet
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
 
       <Row className="gy-4">
         {/* Safety Tips Slider */}

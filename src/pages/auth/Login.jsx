@@ -46,6 +46,11 @@ const Login = () => {
       }
     } else {
       setError(res.message);
+      if (res.message === 'This email does not exist.') {
+        sessionStorage.setItem('emailExists_' + email.toLowerCase(), 'false');
+      } else if (res.message === 'Invalid email or password.' || res.message.includes('blocked') || res.message.includes('suspended')) {
+        sessionStorage.setItem('emailExists_' + email.toLowerCase(), 'true');
+      }
     }
   };
 

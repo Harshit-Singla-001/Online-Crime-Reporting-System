@@ -16,6 +16,7 @@ router.put('/fir/status/:id', protect, adminOnly, adminController.updateFIRStatu
 // User Moderation
 router.get('/users', protect, adminOnly, adminController.getAllUsers);
 router.put('/user/:id/block', protect, adminOnly, adminController.toggleUserBlock);
+router.delete('/user/:id', protect, adminOnly, adminController.deleteUser);
 
 // Site Settings
 router.get('/settings', protect, adminOnly, adminController.getSettings);
@@ -28,6 +29,8 @@ router.put('/profile', protect, adminOnly, adminController.updateAdminProfile);
 // Query Messages
 router.get('/messages', protect, adminOnly, messageController.getAllMessages);
 router.put('/messages/:id/status', protect, adminOnly, messageController.updateMessageStatus);
+router.delete('/messages/:id', protect, adminOnly, messageController.deleteMessage);
+router.post('/messages/:id/report', protect, adminOnly, messageController.reportUserFromMessage);
 
 // Tips CRUD
 router.post('/tips', protect, adminOnly, tipController.createTip);

@@ -6,6 +6,20 @@ const Staff = require('../models/Staff');
 const { generateCaptcha, validateCaptcha } = require('../utils/captcha');
 const { sendEmail } = require('../utils/mailer');
 const { generateRecoveryWords, WORDS_POOL } = require('../utils/recovery');
+const fs = require('fs');
+const path = require('path');
+const settingsFilePath = path.join(__dirname, '../config/settings.json');
+
+const readSettings = () => {
+  try {
+    if (fs.existsSync(settingsFilePath)) {
+      return JSON.parse(fs.readFileSync(settingsFilePath, 'utf-8'));
+    }
+  } catch (err) {
+    console.error('Failed to read settings in authController:', err.message);
+  }
+  return { captchaEnabled: true };
+};
 
 // Helper to encrypt recovery key (since we need to retrieve it for the drag-and-drop word pool)
 const ENCRYPTION_KEY = process.env.JWT_SECRET.padEnd(32, '0').substring(0, 32);
@@ -58,8 +72,12 @@ const isStrongPassword = (password) => {
 // 1. Get Captcha
 exports.getCaptcha = (req, res) => {
   try {
+    const settings = readSettings();
+    if (!settings.captchaEnabled) {
+      return res.status(200).json({ captchaEnabled: false });
+    }
     const { captchaSvg, captchaToken } = generateCaptcha();
-    res.status(200).json({ captchaSvg, captchaToken });
+    res.status(200).json({ captchaSvg, captchaToken, captchaEnabled: true });
   } catch (error) {
     res.status(500).json({ message: 'Error generating CAPTCHA', error: error.message });
   }
@@ -68,6 +86,11 @@ exports.getCaptcha = (req, res) => {
 // 2. Signup Step 1
 exports.signupStep1 = async (req, res) => {
   try {
+    const settings = readSettings();
+    if (settings.userRegistration === false) {
+      return res.status(403).json({ message: 'User registration is temporarily disabled by the administrator.' });
+    }
+
     const { full_name, dob, address, phone_number, email } = req.body;
 
     if (!full_name || !dob || !address || !phone_number || !email) {
@@ -290,13 +313,20 @@ exports.login = async (req, res) => {
   try {
     const { email, password, captchaAnswer, captchaToken } = req.body;
 
-    if (!email || !password || !captchaAnswer || !captchaToken) {
-      return res.status(400).json({ message: 'All fields are required.' });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
     }
 
-    // Validate CAPTCHA
-    if (!validateCaptcha(captchaAnswer, captchaToken)) {
-      return res.status(400).json({ message: 'Incorrect or expired CAPTCHA code.' });
+    const settings = readSettings();
+    if (settings.captchaEnabled) {
+      if (!captchaAnswer || !captchaToken) {
+        return res.status(400).json({ message: 'All fields are required.' });
+      }
+
+      // Validate CAPTCHA
+      if (!validateCaptcha(captchaAnswer, captchaToken)) {
+        return res.status(400).json({ message: 'Incorrect or expired CAPTCHA code.' });
+      }
     }
 
     // Look for user in Users first, then Staff
@@ -311,7 +341,7 @@ exports.login = async (req, res) => {
     }
 
     if (!account) {
-      return res.status(401).json({ message: 'Invalid email or password.' });
+      return res.status(401).json({ message: 'This email does not exist.' });
     }
 
     // Check block status
@@ -601,6 +631,21 @@ exports.me = async (req, res) => {
       role: user.role
     });
   } catch (error) {
-    res.status(500).json({ message: 'Me lookup failed', error: error.message });
+    res.status(500).json({ message: 'Failed to check current session', error: error.message });
   }
 };
+
+// 14. Get Public Settings Configurations (Public)
+exports.getPublicSettings = (req, res) => {
+  try {
+    const settings = readSettings();
+    res.status(200).json({
+      captchaEnabled: settings.captchaEnabled !== false,
+      userRegistration: settings.userRegistration !== false,
+      firSubmission: settings.firSubmission !== false
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to retrieve site configurations', error: error.message });
+  }
+};
+

@@ -15,15 +15,28 @@ const ForgotPassword = () => {
   const handleCheckEmail = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
+    const cachedExists = sessionStorage.getItem('emailExists_' + email.toLowerCase());
+    if (cachedExists === 'false') {
+      setError('This email is not registered.');
+      return;
+    }
+
+    if (cachedExists === 'true') {
+      setEmailChecked(true);
+      return;
+    }
+
+    setLoading(true);
     try {
       const response = await axios.post('/auth/forgot-password', { email });
       setLoading(false);
       setEmailChecked(true);
+      sessionStorage.setItem('emailExists_' + email.toLowerCase(), 'true');
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.message || 'This email is not registered.');
+      sessionStorage.setItem('emailExists_' + email.toLowerCase(), 'false');
     }
   };
 

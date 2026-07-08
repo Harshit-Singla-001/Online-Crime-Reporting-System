@@ -38,6 +38,7 @@ import ManageTips from './pages/admin/ManageTips';
 import SiteSettings from './pages/admin/SiteSettings';
 import AdminProfile from './pages/admin/AdminProfile';
 import Help from './pages/admin/Help';
+import ContactMessages from './pages/admin/ContactMessages';
 
 import { Spinner, Container } from 'react-bootstrap';
 
@@ -168,6 +169,11 @@ function App() {
               <Route path="/admin/users/manage" element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <ManageUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/messages" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <ContactMessages />
                 </ProtectedRoute>
               } />
               <Route path="/admin/tips/manage" element={

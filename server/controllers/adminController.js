@@ -143,7 +143,9 @@ exports.updateFIRStatus = async (req, res) => {
     const emailBody = `Dear ${userName},\n\nThe status of your FIR titled "${fir.title}" has been updated to "${status}".\n\nAdmin Review Comment:\n"${admin_review || 'No review comments provided.'}"\n\nBest Regards,\nOnline Crime Reporting System Team`;
     
     if (userEmail.toLowerCase() !== 'harshitsingla72@gmail.com' && userEmail !== process.env.EMAIL_USER) {
-      await sendEmail(userEmail, emailSubject, emailBody);
+      sendEmail(userEmail, emailSubject, emailBody).catch(err => {
+        console.error('Failed to send status update email:', err.message);
+      });
     }
 
     res.status(200).json({ message: 'FIR status updated successfully and user notified.', fir });
@@ -195,6 +197,16 @@ exports.toggleUserBlock = async (req, res) => {
       user.status = 'active';
       user.blocked_until = null;
       user.failed_attempts = 0;
+
+      // Notify the user via email that account is active again
+      const emailSubject = 'Account Reactivated - Online Crime Reporting System';
+      const emailBody = `Dear ${user.full_name},\n\nYour account has been reactivated by the administrator.\nYou can now log in to the portal.\n\nBest Regards,\nOnline Crime Reporting System Team`;
+      
+      if (user.email.toLowerCase() !== 'harshitsingla72@gmail.com' && user.email !== process.env.EMAIL_USER) {
+        sendEmail(user.email, emailSubject, emailBody).catch(emailErr => {
+          console.error('Failed to send reactivation notification email:', emailErr);
+        });
+      }
     } else {
       user.status = 'blocked';
       user.blocked_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1 week
@@ -202,10 +214,11 @@ exports.toggleUserBlock = async (req, res) => {
       // Notify the user via email
       const emailSubject = 'Account Blocked - Online Crime Reporting System';
       const emailBody = `Dear ${user.full_name},\n\nYour account has been blocked by the administrator.\nIt will be automatically active again in 7 days.\n\nBest Regards,\nOnline Crime Reporting System Team`;
-      try {
-        await sendEmail(user.email, emailSubject, emailBody);
-      } catch (emailErr) {
-        console.error('Failed to send block notification email:', emailErr);
+      
+      if (user.email.toLowerCase() !== 'harshitsingla72@gmail.com' && user.email !== process.env.EMAIL_USER) {
+        sendEmail(user.email, emailSubject, emailBody).catch(emailErr => {
+          console.error('Failed to send block notification email:', emailErr);
+        });
       }
     }
 
@@ -378,5 +391,24 @@ exports.updateAdminProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Failed to update admin profile', error: error.message });
+  }
+};
+
+// 11. Delete User Account (Admin only, only if user is blocked)
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (user.status !== 'blocked') {
+      return res.status(400).json({ message: 'Only blocked user accounts can be deleted.' });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'User account permanently deleted.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete user account', error: error.message });
   }
 };

@@ -6,6 +6,7 @@ const { authLimiter } = require('../middleware/rateLimitMiddleware');
 
 // CAPTCHA route
 router.get('/captcha', authController.getCaptcha);
+router.get('/settings', authController.getPublicSettings);
 
 // Signup routes
 router.post('/signup', authLimiter, authController.signupStep1);

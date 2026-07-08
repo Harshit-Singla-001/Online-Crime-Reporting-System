@@ -1,6 +1,6 @@
 {
   "maintenanceMode": false,
-  "firSubmission": false,
+  "firSubmission": true,
   "userRegistration": true,
-  "captchaEnabled": true
+  "captchaEnabled": false
 }

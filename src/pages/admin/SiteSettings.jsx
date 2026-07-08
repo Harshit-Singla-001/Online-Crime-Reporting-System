@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Card, Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
-import { RiSettings4Line, RiToggleLine, RiShieldKeyholeLine, RiToolsFill, RiAlertFill } from 'react-icons/ri';
+import { RiSettings4Line, RiToggleLine, RiShieldKeyholeLine, RiAlertFill } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const SiteSettings = () => {
   const [settings, setSettings] = useState({
-    maintenanceMode: false,
     firSubmission: true,
     userRegistration: true,
     captchaEnabled: true
@@ -15,8 +16,10 @@ const SiteSettings = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   useEffect(() => {
-    alert("This page is not completely built and it is recommended not to open or use.");
     fetchSettings();
   }, []);
 
@@ -34,7 +37,11 @@ const SiteSettings = () => {
     setError('');
     try {
       const response = await axios.get('/admin/settings');
-      setSettings(response.data);
+      setSettings({
+        firSubmission: response.data.firSubmission,
+        userRegistration: response.data.userRegistration,
+        captchaEnabled: response.data.captchaEnabled
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load system settings.');
     } finally {
@@ -56,11 +63,20 @@ const SiteSettings = () => {
     setSaving(true);
     try {
       const response = await axios.put('/admin/settings', settings);
-      setSuccess(response.data.message || 'System settings successfully updated.');
-      setSettings(response.data.settings);
+      setSuccess(response.data.message || 'System settings successfully updated. Logging out...');
+      setSettings({
+        firSubmission: response.data.settings.firSubmission,
+        userRegistration: response.data.settings.userRegistration,
+        captchaEnabled: response.data.settings.captchaEnabled
+      });
+      
+      // Wait 1.5 seconds, then logout and navigate to login
+      setTimeout(async () => {
+        await logout();
+        navigate('/auth/login');
+      }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update settings.');
-    } finally {
       setSaving(false);
     }
   };
@@ -90,25 +106,6 @@ const SiteSettings = () => {
               <h4 className="text-light fw-bold mb-4 d-flex align-items-center gap-2">
                 <RiSettings4Line className="text-info" /> Core System Switches
               </h4>
-
-              {/* Maintenance Mode */}
-              <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
-                <div style={{ maxWidth: '80%' }}>
-                  <h6 className="text-light fw-bold mb-1 d-flex align-items-center gap-2">
-                    <RiToolsFill className="text-warning" /> System Maintenance Mode
-                  </h6>
-                  <p className="text-muted mb-0" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
-                    When active, the public citizen portal will show a maintenance warning and suspend all report filing endpoints.
-                  </p>
-                </div>
-                <Form.Check 
-                  type="switch"
-                  id="maintenanceMode"
-                  checked={settings.maintenanceMode}
-                  onChange={() => handleToggle('maintenanceMode')}
-                  style={{ fontSize: '1.5rem' }}
-                />
-              </div>
 
               {/* FIR Submissions */}
               <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">

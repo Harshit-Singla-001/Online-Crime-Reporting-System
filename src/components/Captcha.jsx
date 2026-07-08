@@ -5,17 +5,27 @@ import { RiRefreshLine } from 'react-icons/ri';
 
 const Captcha = ({ onCaptchaChange, value, error }) => {
   const [captchaSvg, setCaptchaSvg] = useState('');
+  const [captchaEnabled, setCaptchaEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const fetchCaptcha = async () => {
     setLoading(true);
     try {
       const response = await axios.get('/auth/captcha');
-      setCaptchaSvg(response.data.captchaSvg);
-      onCaptchaChange({
-        token: response.data.captchaToken,
-        answer: ''
-      });
+      if (response.data.captchaEnabled === false) {
+        setCaptchaEnabled(false);
+        onCaptchaChange({
+          token: 'DISABLED',
+          answer: 'DISABLED'
+        });
+      } else {
+        setCaptchaEnabled(true);
+        setCaptchaSvg(response.data.captchaSvg);
+        onCaptchaChange({
+          token: response.data.captchaToken,
+          answer: ''
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch CAPTCHA:', error);
     } finally {
@@ -33,6 +43,10 @@ const Captcha = ({ onCaptchaChange, value, error }) => {
       answer: e.target.value.toUpperCase()
     });
   };
+
+  if (!captchaEnabled) {
+    return null; // Hide CAPTCHA completely if disabled on server
+  }
 
   return (
     <div className="crs-card p-3 mb-3" style={{ background: 'rgba(255,255,255,0.02)' }}>

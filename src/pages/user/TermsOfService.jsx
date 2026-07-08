@@ -40,7 +40,7 @@ const TermsOfService = () => {
         </p>
 
         <div className="mt-5 pt-3 border-top border-secondary text-muted" style={{ fontSize: '0.8rem' }}>
-          Developed by Harshit Singla | Roll No: 2417119 | Academic Prototype Validation only.
+          Developed by Harshit Singla | Passing Year: 2024–2028 | Academic Prototype Validation only.
         </div>
       </div>
     </Container>

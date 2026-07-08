@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Table, InputGroup } from 'react-bootstrap';
-import { RiSearchLine, RiUserLine, RiLockLine, RiLockUnlockLine } from 'react-icons/ri';
+import { RiSearchLine, RiUserLine, RiLockLine, RiLockUnlockLine, RiDeleteBinLine } from 'react-icons/ri';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -66,6 +66,21 @@ const ManageUsers = () => {
       }));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to alter block settings.');
+    }
+  };
+
+  const handleDeleteUser = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this user account? This action cannot be undone.")) {
+      return;
+    }
+    setError('');
+    setSuccess('');
+    try {
+      const response = await axios.delete(`/admin/user/${id}`);
+      setSuccess(response.data.message || 'User account deleted successfully.');
+      setUsers(prev => prev.filter(u => u._id !== id));
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete user account.');
     }
   };
 
@@ -170,14 +185,24 @@ const ManageUsers = () => {
                     </td>
                     <td className="pe-4 py-3 text-center">
                       {u.status === 'blocked' ? (
-                        <Button 
-                          size="sm" 
-                          variant="outline-success" 
-                          className="d-flex align-items-center gap-1 mx-auto"
-                          onClick={() => handleToggleBlock(u._id, u.status)}
-                        >
-                          <RiLockUnlockLine /> Unblock Account
-                        </Button>
+                        <div className="d-flex flex-column gap-2 align-items-center justify-content-center">
+                          <Button 
+                            size="sm" 
+                            variant="outline-success" 
+                            className="d-flex align-items-center gap-1"
+                            onClick={() => handleToggleBlock(u._id, u.status)}
+                          >
+                            <RiLockUnlockLine /> Unblock Account
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="danger" 
+                            className="d-flex align-items-center gap-1"
+                            onClick={() => handleDeleteUser(u._id)}
+                          >
+                            <RiDeleteBinLine /> Delete Account
+                          </Button>
+                        </div>
                       ) : (
                         <Button 
                           size="sm" 

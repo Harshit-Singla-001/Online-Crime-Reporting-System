@@ -42,7 +42,7 @@ const Help = () => {
             <div>
               <h6 className="text-light fw-bold mb-2">4. System Parameters</h6>
               <p className="text-muted mb-0" style={{ fontSize: '0.85rem', lineHeight: '1.5' }}>
-                Manage captcha validation state, visitor register switches, and toggle maintenance mode under <strong>Site Settings</strong>.
+                Manage captcha validation state, visitor register switches, and system switches under <strong>Site Settings</strong>.
               </p>
             </div>
           </Card>
@@ -113,8 +113,8 @@ const Help = () => {
                 <p className="text-light fw-bold mb-0">BTech AI & DS</p>
               </Col>
               <Col md={6}>
-                <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>ROLL NUMBER ID</p>
-                <p className="text-light fw-bold mb-0">2417119</p>
+                <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>PASSING YEAR</p>
+                <p className="text-light fw-bold mb-0">2024–2028</p>
               </Col>
               <Col md={6}>
                 <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>PROJECT TYPE</p>

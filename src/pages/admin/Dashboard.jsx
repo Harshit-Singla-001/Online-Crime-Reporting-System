@@ -170,7 +170,7 @@ const Dashboard = () => {
             <div>
               <h5 className="text-light fw-bold mb-1">Configuration Settings</h5>
               <p className="text-muted mb-0" style={{ fontSize: '0.85rem' }}>
-                Toggle captcha checks, registrations, maintenance mode
+                Toggle captcha checks, registrations, and submissions
               </p>
             </div>
             <Button as={Link} to="/admin/settings" variant="outline-info" className="py-2 px-3">

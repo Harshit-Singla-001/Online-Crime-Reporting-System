@@ -2,11 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Form, Button, Alert, Row, Col, InputGroup } from 'react-bootstrap';
-import { RiUser3Line, RiCalendarLine, RiRoadMapLine, RiSmartphoneLine, RiMailLine, RiShieldUserLine } from 'react-icons/ri';
+import { RiUser3Line, RiCalendarLine, RiRoadMapLine, RiSmartphoneLine, RiMailLine, RiShieldUserLine, RiErrorWarningLine } from 'react-icons/ri';
 
 const SignupStep1 = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [registrationDisabled, setRegistrationDisabled] = useState(false);
+
+  useEffect(() => {
+    const checkSettings = async () => {
+      try {
+        const res = await axios.get('/auth/settings');
+        if (res.data.userRegistration === false) {
+          setRegistrationDisabled(true);
+        }
+      } catch (err) {
+        console.error('Failed to load signup settings:', err);
+      }
+    };
+    checkSettings();
+  }, []);
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -148,6 +164,13 @@ const SignupStep1 = () => {
           <p className="text-muted">Step 1: Provide demographic and identity verification details</p>
         </div>
 
+        {registrationDisabled && (
+          <Alert variant="danger" className="d-flex align-items-center gap-2 mb-4">
+            <RiErrorWarningLine size={20} className="flex-shrink-0" />
+            <span>This feature is temporarily turned off by the admin. You cannot register a new account at this moment.</span>
+          </Alert>
+        )}
+
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form onSubmit={handleSubmit}>
@@ -162,7 +185,7 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="text"
                     name="full_name"
-                    placeholder="e.g. John Doe"
+                    placeholder="e.g. Random Person"
                     value={formData.full_name}
                     onChange={handleChange}
                     className="input-custom"
@@ -246,7 +269,7 @@ const SignupStep1 = () => {
                   <Form.Control
                     type="email"
                     name="email"
-                    placeholder="e.g. john@example.com"
+                    placeholder="e.g. example@gmail.com"
                     value={formData.email}
                     onChange={handleChange}
                     className="input-custom"
@@ -295,7 +318,7 @@ const SignupStep1 = () => {
           <Button 
             type="submit" 
             className="btn-grad w-100 py-3 mt-3"
-            disabled={loading}
+            disabled={loading || registrationDisabled}
           >
             {loading ? 'Sending verification code...' : 'Verify Email & Proceed'}
           </Button>

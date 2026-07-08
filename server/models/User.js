@@ -65,6 +65,10 @@ const userSchema = new mongoose.Schema({
   profile_edited: {
     type: Boolean,
     default: false
+  },
+  reports_count: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

@@ -1,33 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
-import { RiGithubLine, RiLinkedinLine, RiCodeSSlashLine } from 'react-icons/ri';
+import { Container, Row, Col } from 'react-bootstrap';
+import { RiShieldUserLine, RiGithubLine, RiLinkedinBoxLine } from 'react-icons/ri';
 
-const AppFooter = () => {
+const Footer = () => {
   const { user } = useAuth();
   const isAdmin = user && user.role === 'admin';
 
   return (
-    <footer className="py-5 mt-auto" style={{ background: 'rgba(10, 13, 22, 0.95)', borderTop: '1px solid var(--border-glass)' }}>
+    <footer className="footer-glass py-5 mt-auto" style={{ borderTop: '1px solid var(--border-glass)', background: 'var(--bg-secondary)' }}>
       <Container>
         {!isAdmin ? (
           // USER / PUBLIC FOOTER
-          <Row className="gy-4">
+          <Row className="gy-4 align-items-start">
             <Col lg={4} md={6}>
-              <h5 className="text-light mb-3" style={{ fontWeight: '700' }}>Online Crime Reporting System</h5>
-              <p className="text-muted" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
-                A secure MERN Stack portal facilitating digital crime logging, status tracking, and community safety guidelines.
+              <div className="d-flex align-items-center gap-2 mb-3">
+                <RiShieldUserLine size={28} className="text-info" />
+                <span className="text-light fw-bold fs-5">OCRS</span>
+              </div>
+              <p className="text-muted text-start" style={{ fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '300px' }}>
+                Online Crime Reporting System is a secure, citizen-centric portal designed to report non-emergency incidents and track real-time moderation responses.
               </p>
             </Col>
             
-            <Col lg={4} md={6} className="d-flex flex-column align-items-lg-center">
-              <div>
-                <h5 className="text-light mb-3" style={{ fontWeight: '700' }}>Quick Links</h5>
-                <ul className="list-unstyled d-flex flex-column gap-2" style={{ fontSize: '0.9rem' }}>
+            <Col lg={4} md={6} className="d-flex justify-content-lg-center">
+              <div className="text-start">
+                <h5 className="text-light mb-3" style={{ fontWeight: '700' }}>Quick Navigation</h5>
+                <ul className="list-unstyled d-flex flex-column gap-2 mb-0" style={{ fontSize: '0.85rem' }}>
                   <li>
-                    <Link to="/user/pages/privacy-policy" className="text-muted text-decoration-none hover-link">
-                      Privacy Policy
+                    <Link to="/user/pages/about" className="text-muted text-decoration-none hover-link">
+                      About Project
                     </Link>
                   </li>
                   <li>
@@ -36,8 +39,8 @@ const AppFooter = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/user/pages/about" className="text-muted text-decoration-none hover-link">
-                      About Project
+                    <Link to="/user/pages/privacy-policy" className="text-muted text-decoration-none hover-link">
+                      Privacy Policy
                     </Link>
                   </li>
                 </ul>
@@ -45,25 +48,32 @@ const AppFooter = () => {
             </Col>
             
             <Col lg={4} md={12} className="d-flex flex-column align-items-lg-end">
-              <div>
+              <div className="text-start text-lg-end">
                 <h5 className="text-light mb-3" style={{ fontWeight: '700' }}>Developer Profiles</h5>
-                <div className="d-flex gap-3 mb-3">
-                  <a href="https://github.com" target="_blank" rel="noreferrer" className="text-muted fs-4 hover-icon" title="GitHub">
+                <div className="d-flex gap-3 mb-3 justify-content-start justify-content-lg-end">
+                  <a href="https://github.com/Harshit-Singla-001/" target="_blank" rel="noreferrer" className="text-muted fs-4 hover-icon" title="GitHub">
                     <RiGithubLine />
                   </a>
-                  <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-muted fs-4 hover-icon" title="LinkedIn">
-                    <RiLinkedinLine />
-                  </a>
-                  <a href="https://leetcode.com" target="_blank" rel="noreferrer" className="text-muted fs-4 hover-icon" title="LeetCode">
-                    <RiCodeSSlashLine />
+                  <a href="https://www.linkedin.com/in/harshit-singla001/" target="_blank" rel="noreferrer" className="text-muted fs-4 hover-icon" title="LinkedIn">
+                    <RiLinkedinBoxLine />
                   </a>
                 </div>
-                <p className="text-muted mb-0" style={{ fontSize: '0.8rem' }}>
-                  Harshit Singla | Roll No: 2417119
-                </p>
-                <p className="text-muted" style={{ fontSize: '0.8rem' }}>
-                  BTech AI & DS
-                </p>
+                
+                {/* Developer details arranged vertically */}
+                <div className="text-muted" style={{ fontSize: '0.85rem', lineHeight: '1.6' }}>
+                  <div className="fw-bold text-light">
+                    <a 
+                      href="https://www.linkedin.com/in/harshit-singla001" 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-light text-decoration-none hover-underline"
+                    >
+                      Harshit Singla
+                    </a>
+                  </div>
+                  <div>BTech AI & DS (Branch)</div>
+                  <div>Passing Year: 2024–2028</div>
+                </div>
               </div>
             </Col>
           </Row>
@@ -81,9 +91,9 @@ const AppFooter = () => {
                 Help Guide
               </Link>
               <span className="text-muted">|</span>
-              <span className="text-success d-flex align-items-center gap-1" style={{ fontSize: '0.85rem', fontWeight: '500' }}>
-                <span className="geo-dot" style={{ width: '8px', height: '8px' }}></span> System Active
-              </span>
+              <Link to="/admin/settings" className="text-success text-decoration-none d-flex align-items-center gap-1" style={{ fontSize: '0.85rem', fontWeight: '500' }}>
+                <span className="geo-dot" style={{ width: '8px', height: '8px' }}></span> Settings
+              </Link>
               <span className="text-muted">|</span>
               <span className="text-muted" style={{ fontSize: '0.85rem' }}>
                 Admin: <strong>{user?.full_name}</strong>
@@ -106,4 +116,4 @@ const AppFooter = () => {
   );
 };
 
-export default AppFooter;
+export default Footer;

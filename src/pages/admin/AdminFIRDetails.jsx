@@ -239,13 +239,15 @@ const AdminFIRDetails = () => {
                 {fir.images.map((img, idx) => (
                   <Col md={4} key={idx}>
                     <div className="p-1 rounded bg-black" style={{ border: '1px solid var(--border-glass)' }}>
-                      <Image 
-                        src={`http://localhost:5000${img}`}
-                        alt={`Evidence ${idx + 1}`}
-                        fluid 
-                        rounded 
-                        style={{ height: '180px', width: '100%', objectFit: 'cover' }}
-                      />
+                      <a href={`http://localhost:5000${img}`} target="_blank" rel="noreferrer" title="Click to view full image in new tab">
+                        <Image 
+                          src={`http://localhost:5000${img}`}
+                          alt={`Evidence ${idx + 1}`}
+                          fluid 
+                          rounded 
+                          style={{ height: '180px', width: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                        />
+                      </a>
                     </div>
                   </Col>
                 ))}

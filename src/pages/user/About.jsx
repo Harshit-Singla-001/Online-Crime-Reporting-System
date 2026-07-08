@@ -84,8 +84,8 @@ const About = () => {
                   <strong className="text-light">BTech AI & DS</strong>
                 </ListGroup.Item>
                 <ListGroup.Item className="bg-transparent border-secondary text-muted px-0 py-2 d-flex justify-content-between">
-                  <span>University Roll No</span>
-                  <strong className="text-light">2417119</strong>
+                  <span>Passing Year</span>
+                  <strong className="text-light">2024–2028</strong>
                 </ListGroup.Item>
               </ListGroup>
             </div>
@@ -105,11 +105,27 @@ const About = () => {
 
         {/* Future Scope */}
         <Col xs={12}>
-          <Card className="crs-card p-4">
-            <h4 className="text-light fw-bold mb-2">Future Portal Enhancements</h4>
-            <p className="text-muted mb-0" style={{ fontSize: '0.9rem', lineHeight: '1.6' }}>
-              Future releases plan to integrate actual government gateway APIs, automated email/SMS status alerts via Twilio, AI-assisted crime severity categorization (sorting low/high threats instantly), and dashboard analytics mapping crime density clusters.
-            </p>
+          <Card className="crs-card p-4 text-start">
+            <h4 className="text-light fw-bold mb-3">Future Portal Enhancements</h4>
+            <Row className="gy-2">
+              <Col md={6}>
+                <ul className="text-muted mb-0 ps-3" style={{ fontSize: '0.9rem', lineHeight: '1.7' }}>
+                  <li>Verify mobile numbers</li>
+                  <li>Add multiple levels of access</li>
+                  <li>Graphical representation of public FIR records by region</li>
+                  <li>Activity logs for administrators and citizens</li>
+                  <li>Ability to save reports (accessible from the profile dropdown)</li>
+                </ul>
+              </Col>
+              <Col md={6}>
+                <ul className="text-muted mb-0 ps-3" style={{ fontSize: '0.9rem', lineHeight: '1.7' }}>
+                  <li>Custom profile picture uploads</li>
+                  <li>Multi-language accessibility support</li>
+                  <li>System maintenance toggle button</li>
+                  <li>Dedicated portal to view citizen-reported FIR history</li>
+                </ul>
+              </Col>
+            </Row>
           </Card>
         </Col>
       </Row>

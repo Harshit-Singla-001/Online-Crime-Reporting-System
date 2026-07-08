@@ -35,8 +35,20 @@ const FileFIR = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Get Geolocation on mount
+  const [firSubmissionDisabled, setFirSubmissionDisabled] = useState(false);
+
   useEffect(() => {
+    const checkSettings = async () => {
+      try {
+        const res = await axios.get('/auth/settings');
+        if (res.data.firSubmission === false) {
+          setFirSubmissionDisabled(true);
+        }
+      } catch (err) {
+        console.error('Failed to load FIR settings:', err);
+      }
+    };
+    checkSettings();
     fetchGeolocation();
   }, []);
 
@@ -313,10 +325,10 @@ const FileFIR = () => {
             >
               <RiEdit2Line className="me-1" /> Edit Report
             </Button>
-            <Button 
+             <Button 
               onClick={handleFinalConfirm} 
               className="btn-grad flex-grow-1 py-3"
-              disabled={loading}
+              disabled={loading || firSubmissionDisabled}
             >
               <RiCheckLine size={18} className="me-1" /> {loading ? 'Submitting FIR...' : 'Confirm & Submit'}
             </Button>
@@ -334,6 +346,13 @@ const FileFIR = () => {
           <h2 className="text-light fw-bold">File Citizen FIR</h2>
           <p className="text-muted">Submit official report details regarding crime incident</p>
         </div>
+
+        {firSubmissionDisabled && (
+          <Alert variant="danger" className="d-flex align-items-center gap-2 mb-4">
+            <RiErrorWarningLine size={20} className="flex-shrink-0" />
+            <span>This feature is temporarily turned off by the admin. You cannot file a new FIR at this moment.</span>
+          </Alert>
+        )}
 
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -579,6 +598,7 @@ const FileFIR = () => {
           <Button 
             type="submit" 
             className="btn-grad w-100 py-3 mt-3"
+            disabled={firSubmissionDisabled}
           >
             Review Report & Proceed
           </Button>
