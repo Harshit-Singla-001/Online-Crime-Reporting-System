@@ -197,9 +197,11 @@ const VerifyOTP = () => {
         <p className="text-muted">
           We've sent a 6-digit OTP code to <strong className="text-light">{email}</strong>. Please enter it below.
         </p>
-
-
-
+        {window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && (
+          <Alert variant="warning" className="text-start py-2 px-3 mb-3" style={{ fontSize: '0.85rem', backgroundColor: 'rgba(255, 193, 7, 0.1)', borderColor: 'rgba(255, 193, 7, 0.3)', color: '#ffc107' }}>
+            <strong>[Notice]:</strong> OTP system is not working or broken in the process of deployment we are fixing this. No OTP verification is needed for now until this issue is solved. You can enter any 6 digits (e.g., 123456) to proceed.
+          </Alert>
+        )}
         {error && (
           <Alert variant={error.includes('sent') ? 'success' : 'danger'} className="text-start">
             {error}
