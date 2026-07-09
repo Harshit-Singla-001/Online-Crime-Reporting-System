@@ -155,12 +155,10 @@ exports.fileFIR = (req, res) => {
       const emailSubject = `FIR Submission: ${fir.title}`;
       const emailBody = `Dear ${userName},\n\nYour fir ${fir.title} is filed and currently in pending to review.\n\nBest Regards,\nOnline Crime Reporting System Team`;
 
-      try {
-        if (userEmail && userEmail.toLowerCase() !== 'harshitsingla72@gmail.com' && userEmail !== process.env.EMAIL_USER) {
-          await sendEmail(userEmail, emailSubject, emailBody);
-        }
-      } catch (emailErr) {
-        console.error('Failed to send FIR filing notification email:', emailErr);
+      if (userEmail && userEmail.toLowerCase() !== 'harshitsingla72@gmail.com' && userEmail !== process.env.EMAIL_USER) {
+        sendEmail(userEmail, emailSubject, emailBody).catch(emailErr => {
+          console.error('Failed to send FIR filing notification email:', emailErr);
+        });
       }
 
       res.status(201).json({

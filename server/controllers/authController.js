@@ -152,12 +152,12 @@ exports.signupStep1 = async (req, res) => {
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Send OTP via mail
-    await sendEmail(
+    // Send OTP via mail in background (do not await, to prevent Render/request timeout)
+    sendEmail(
       email,
       'Email Verification Code - Online Crime Reporting System',
       `Your verification code is: ${otp}\nThis code is valid for 10 minutes.`
-    );
+    ).catch(err => console.error('Failed to send signup OTP email:', err.message));
 
     // Sign a temporary token containing step 1 data and the otp
     const signupData = {
@@ -259,7 +259,7 @@ exports.completeSignup = async (req, res) => {
     // Generate Recovery Words
     const recoveryWords = generateRecoveryWords();
     const recoveryKeyString = recoveryWords.join(' ');
-    
+
     // Hash password & Encrypt recovery key
     const password_hash = await bcrypt.hash(password, 12);
     const recovery_key_hash = encryptKey(recoveryKeyString);
@@ -289,7 +289,8 @@ exports.completeSignup = async (req, res) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
@@ -353,11 +354,11 @@ exports.login = async (req, res) => {
         account.blocked_until = null;
         await account.save({ timestamps: false });
       } else {
-        const timeMessage = account.blocked_until 
+        const timeMessage = account.blocked_until
           ? `Try again after ${account.blocked_until.toLocaleString()}`
           : 'Please contact support.';
-        return res.status(403).json({ 
-          message: `Account is ${account.status}. ${timeMessage}` 
+        return res.status(403).json({
+          message: `Account is ${account.status}. ${timeMessage}`
         });
       }
     }
@@ -371,8 +372,8 @@ exports.login = async (req, res) => {
         account.status = 'blocked';
         account.blocked_until = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days block
         await account.save({ timestamps: false });
-        return res.status(403).json({ 
-          message: 'Account blocked due to 5 failed login attempts. Try again after 1 week.' 
+        return res.status(403).json({
+          message: 'Account blocked due to 5 failed login attempts. Try again after 1 week.'
         });
       }
       await account.save({ timestamps: false });
@@ -395,7 +396,8 @@ exports.login = async (req, res) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
@@ -445,11 +447,12 @@ exports.forgotOtpRequest = async (req, res) => {
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await sendEmail(
+    // Send OTP via mail in background (do not await, to prevent Render/request timeout)
+    sendEmail(
       email,
       'Password Reset Code - Online Crime Reporting System',
       `Your verification code is: ${otp}\nThis code is valid for 5 minutes.`
-    );
+    ).catch(err => console.error('Failed to send password reset OTP email:', err.message));
 
     const token = jwt.sign({ email, otp }, process.env.JWT_SECRET, { expiresIn: '5m' });
     res.status(200).json({ message: 'OTP sent.', resetToken: token });
@@ -499,7 +502,7 @@ exports.forgotKeyRequest = async (req, res) => {
     }
 
     const originalWords = decrypted.split(' ');
-    
+
     // Pick 5 decoy words from WORDS_POOL that are not in originalWords
     const decoys = [];
     const poolFiltered = WORDS_POOL.filter(w => !originalWords.includes(w));
@@ -616,7 +619,10 @@ exports.resetPassword = async (req, res) => {
 
 // 12. Logout
 exports.logout = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    secure: true,
+    sameSite: 'none'
+  });
   res.status(200).json({ message: 'Logout successful' });
 };
 
