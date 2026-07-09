@@ -14,7 +14,7 @@ const initSettings = () => {
     maintenanceMode: false,
     firSubmission: true,
     userRegistration: true,
-    captchaEnabled: true
+    captchaEnabled: false
   };
   const dir = path.dirname(settingsFilePath);
   if (!fs.existsSync(dir)) {
@@ -36,7 +36,7 @@ const readSettings = () => {
       maintenanceMode: false,
       firSubmission: true,
       userRegistration: true,
-      captchaEnabled: true
+      captchaEnabled: false
     };
   }
 };

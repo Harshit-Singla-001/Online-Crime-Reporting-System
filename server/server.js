@@ -30,7 +30,12 @@ const frontendOrigins = [
 ];
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || frontendOrigins.indexOf(origin) !== -1 || origin.startsWith('http://localhost:')) {
+    if (
+      !origin || 
+      frontendOrigins.indexOf(origin) !== -1 || 
+      origin.startsWith('http://localhost:') || 
+      /\.vercel\.app$/.test(origin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

@@ -18,7 +18,7 @@ const readSettings = () => {
   } catch (err) {
     console.error('Failed to read settings in authController:', err.message);
   }
-  return { captchaEnabled: true };
+  return { captchaEnabled: false };
 };
 
 // Helper to encrypt recovery key (since we need to retrieve it for the drag-and-drop word pool)

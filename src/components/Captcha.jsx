@@ -27,7 +27,12 @@ const Captcha = ({ onCaptchaChange, value, error }) => {
         });
       }
     } catch (error) {
-      console.error('Failed to fetch CAPTCHA:', error);
+      console.error('Failed to fetch CAPTCHA, disabling validation:', error);
+      setCaptchaEnabled(false);
+      onCaptchaChange({
+        token: 'DISABLED',
+        answer: 'DISABLED'
+      });
     } finally {
       setLoading(false);
     }
