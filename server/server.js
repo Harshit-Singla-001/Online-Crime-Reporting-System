@@ -49,6 +49,14 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: "Online Crime Reporting System API is running successfully.", 
+    status: "active" 
+  });
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Unhandled Error:', err.message);
