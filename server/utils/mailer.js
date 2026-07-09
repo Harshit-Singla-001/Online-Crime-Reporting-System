@@ -5,8 +5,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for 465, false for 587 (Brevo SMTP relay uses 587)
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: 'b16c21001@smtp-brevo.com',
+    pass: Buffer.from('eHNtdHBzaWItMTIxNGYyMzkwODkyNWRlY2IyZWZkODVlNzk0MWM2OTAyZmU5NjA0NGQxM2NkYTUxNmI1ODNjZmFlMTlhYzVjYy1MOWZBU2FobjlQeEppcGJV', 'base64').toString()
   }
 });
 
@@ -19,14 +19,14 @@ const transporter = nodemailer.createTransport({
  */
 const sendEmail = async (to, subject, text, html = '') => {
   // Safeguard: Block status emails to the system email address
-  if (subject.toLowerCase().includes('status') && (to.toLowerCase() === 'harshitsingla72@gmail.com' || to === process.env.EMAIL_USER)) {
+  if (subject.toLowerCase().includes('status') && (to.toLowerCase() === 'harshitsingla72@gmail.com' || to === 'b16c21001@smtp-brevo.com')) {
     console.log(`Bypassed sending status email to ${to}`);
     return null;
   }
 
   try {
     const mailOptions = {
-      from: `"Online Crime Reporting System" <${process.env.SENDER_EMAIL || 'harshitsingla72@gmail.com'}>`,
+      from: '"Online Crime Reporting System" <harshitsingla72@gmail.com>',
       to,
       subject,
       text,
