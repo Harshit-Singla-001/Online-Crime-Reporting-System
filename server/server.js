@@ -52,6 +52,26 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
+// Test SMTP route for diagnosing email connection issues
+app.get('/api/test-smtp', async (req, res) => {
+  const nodemailer = require('nodemailer');
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    await transporter.verify();
+    res.json({ status: "success", message: "SMTP connection verified successfully!" });
+  } catch (err) {
+    res.status(500).json({ status: "error", error: err.message, user: process.env.EMAIL_USER });
+  }
+});
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({ 
