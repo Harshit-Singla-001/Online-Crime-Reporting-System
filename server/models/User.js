@@ -75,7 +75,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ phone_number: 1 });
 
 module.exports = mongoose.model('User', userSchema);
