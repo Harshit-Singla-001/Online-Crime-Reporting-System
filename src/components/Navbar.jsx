@@ -105,9 +105,9 @@ const AppNavbar = () => {
                 </NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <Nav.Link as={Link} to="/auth/login" className="btn-grad text-white px-4 py-2 border-0">
+              <Link to="/auth/login" className="btn-grad text-white px-4 py-2 border-0 rounded-2 text-decoration-none d-inline-flex align-items-center justify-content-center" style={{ color: '#ffffff' }}>
                 Log In
-              </Nav.Link>
+              </Link>
             )}
           </Nav>
         </Navbar.Collapse>
