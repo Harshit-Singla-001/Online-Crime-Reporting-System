@@ -2,8 +2,9 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false, // true for 465, false for 587 (Brevo SMTP relay uses 587)
+  port: 465,
+  secure: true, // true for 465, false for 587
+  family: 4,    // Force IPv4 to prevent ENETUNREACH/timeout issues on Render
   auth: {
     user: 'b16c21001@smtp-brevo.com',
     pass: Buffer.from('eHNtdHBzaWItMTIxNGYyMzkwODkyNWRlY2IyZWZkODVlNzk0MWM2OTAyZmU5NjA0NGQxM2NkYTUxNmI1ODNjZmFlMTlhYzVjYy1MOWZBU2FobjlQeEppcGJV', 'base64').toString()
