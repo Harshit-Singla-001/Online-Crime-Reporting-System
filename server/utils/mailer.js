@@ -26,7 +26,7 @@ const sendEmail = async (to, subject, text, html = '') => {
 
   try {
     const mailOptions = {
-      from: `"Online Crime Reporting System" <${process.env.EMAIL_USER}>`,
+      from: `"Online Crime Reporting System" <${process.env.SENDER_EMAIL || process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
