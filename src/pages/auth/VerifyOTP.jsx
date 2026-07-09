@@ -198,14 +198,7 @@ const VerifyOTP = () => {
           We've sent a 6-digit OTP code to <strong className="text-light">{email}</strong>. Please enter it below.
         </p>
 
-        {signupToken && (
-          <Alert variant="warning" className="text-start py-2 px-3 mb-3" style={{ fontSize: '0.85rem', backgroundColor: 'rgba(255, 193, 7, 0.1)', borderColor: 'rgba(255, 193, 7, 0.3)', color: '#ffc107' }}>
-            <strong>[Demo Mode]:</strong> Verification code for testing: 
-            <strong className="ms-1" style={{ fontSize: '1.1rem', color: '#0dcaf0' }}>
-              {JSON.parse(atob(signupToken.split('.')[1])).otp}
-            </strong>
-          </Alert>
-        )}
+
 
         {error && (
           <Alert variant={error.includes('sent') ? 'success' : 'danger'} className="text-start">
