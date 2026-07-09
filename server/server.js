@@ -12,6 +12,9 @@ const publicRoutes = require('./routes/publicRoutes');
 
 const app = express();
 
+// Trust proxy for rate limiting behind reverse proxies (like Render)
+app.set('trust proxy', 1);
+
 // Connect to Database
 connectDB().then(() => {
   // Seed initial Admin accounts if empty
