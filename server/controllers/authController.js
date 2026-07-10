@@ -139,6 +139,12 @@ exports.signupStep1 = async (req, res) => {
       return res.status(400).json({ message: 'Aadhaar number must be exactly 12 numeric digits.' });
     }
 
+    // Check if Aadhaar number already exists
+    const existingAadhaar = await User.findOne({ aadhaar_number });
+    if (existingAadhaar) {
+      return res.status(400).json({ message: 'This Aadhaar number is already registered.' });
+    }
+
     // PAN validation if age >= 18
     if (age >= 18 && pan_number) {
       const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
@@ -255,6 +261,12 @@ exports.completeSignup = async (req, res) => {
     const checkUser = await User.findOne({ email: decoded.email });
     if (checkUser) {
       return res.status(400).json({ message: 'Email already registered.' });
+    }
+
+    // Check if Aadhaar number was registered in the meantime
+    const checkAadhaar = await User.findOne({ aadhaar_number: decoded.aadhaar_number });
+    if (checkAadhaar) {
+      return res.status(400).json({ message: 'Aadhaar number already registered.' });
     }
 
     // Generate Recovery Words
