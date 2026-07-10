@@ -336,7 +336,7 @@ const Profile = () => {
                       style={{ outline: 'none', boxShadow: 'none' }}
                     />
                   ) : (
-                    <span className="text-light">{profile.pan_number || 'N/A (Minor)'}</span>
+                    <span className="text-light">{profile.pan_number || 'N/A'}</span>
                   )}
                 </div>
               </Form.Group>
