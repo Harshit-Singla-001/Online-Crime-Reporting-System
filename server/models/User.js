@@ -7,11 +7,12 @@ const userSchema = new mongoose.Schema({
   },
   dob: {
     type: Date,
-    required: true
+    required: false
   },
   aadhaar_number: {
     type: String,
-    required: true,
+    required: false,
+    sparse: true,
     unique: true
   },
   pan_number: {
@@ -20,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required: true
+    required: false
   },
   phone_number: {
     type: String,

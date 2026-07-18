@@ -37,6 +37,36 @@ const upload = multer({
   }
 }).array('images', 3);
 
+async function uploadToFreeImage(filePath) {
+  try {
+    const base64Data = fs.readFileSync(filePath, { encoding: 'base64' });
+    const apiKey = process.env.FREEIMAGE_API_KEY || '6d207e02198a847aa98d0a2a901485a5';
+    
+    const response = await fetch('https://freeimage.host/api/1/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        key: apiKey,
+        action: 'upload',
+        source: base64Data,
+        format: 'json'
+      })
+    });
+    
+    const result = await response.json();
+    if (result && result.image && result.image.url) {
+      return result.image.url;
+    } else {
+      throw new Error(result.error?.message || 'Failed to upload image to freeimage.host');
+    }
+  } catch (error) {
+    console.error('Error uploading image to freeimage.host:', error.message);
+    throw error;
+  }
+}
+
 const settingsFilePath = path.join(__dirname, '../config/settings.json');
 
 const readSettings = () => {
@@ -110,8 +140,29 @@ exports.fileFIR = (req, res) => {
         return res.status(400).json({ message: 'You must check the declaration box.' });
       }
 
-      // Collect uploaded filenames
-      const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+      // Upload evidence images to freeimage.host
+      const imageUrls = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          try {
+            const url = await uploadToFreeImage(file.path);
+            imageUrls.push(url);
+          } catch (uploadErr) {
+            // Clean up files on error
+            req.files.forEach(f => {
+              if (fs.existsSync(f.path)) {
+                fs.unlinkSync(f.path);
+              }
+            });
+            return res.status(500).json({ message: 'Failed to upload evidence images: ' + uploadErr.message });
+          } finally {
+            // Clean up this file after successful upload/attempt to prevent cluttering disk
+            if (fs.existsSync(file.path)) {
+              fs.unlinkSync(file.path);
+            }
+          }
+        }
+      }
 
       // Create primary FIR record (priority will auto-calculate)
       const fir = new FIRRecord({
@@ -126,7 +177,7 @@ exports.fileFIR = (req, res) => {
         current_address,
         suspect_description: suspect_description || null,
         witness_description: witness_description || null,
-        images,
+        images: imageUrls,
         status: 'Pending'
       });
 

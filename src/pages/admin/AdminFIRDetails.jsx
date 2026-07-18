@@ -8,6 +8,14 @@ const AdminFIRDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendBase = apiURL.replace(/\/api$/, '');
+    return `${backendBase}${url}`;
+  };
+
   const [fir, setFir] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -239,9 +247,9 @@ const AdminFIRDetails = () => {
                 {fir.images.map((img, idx) => (
                   <Col md={4} key={idx}>
                     <div className="p-1 rounded bg-black" style={{ border: '1px solid var(--border-glass)' }}>
-                      <a href={`http://localhost:5000${img}`} target="_blank" rel="noreferrer" title="Click to view full image in new tab">
+                      <a href={getImageUrl(img)} target="_blank" rel="noreferrer" title="Click to view full image in new tab">
                         <Image 
-                          src={`http://localhost:5000${img}`}
+                          src={getImageUrl(img)}
                           alt={`Evidence ${idx + 1}`}
                           fluid 
                           rounded 

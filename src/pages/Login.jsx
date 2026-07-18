@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { Container, Form, Button, Alert, Row, Col, InputGroup } from 'react-bootstrap';
+import { useAuth } from '../context/AuthContext';
+import { Container, Form, Button, Alert, InputGroup, Spinner } from 'react-bootstrap';
 import { RiMailLine, RiLockPasswordLine, RiEyeLine, RiEyeOffLine, RiShieldKeyholeLine } from 'react-icons/ri';
-import Captcha from '../../components/Captcha';
+import Captcha from '../components/Captcha';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -15,7 +15,18 @@ const Login = () => {
   const [captcha, setCaptcha] = useState({ token: '', answer: '' });
   
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // If user is already logged in, redirect them immediately to their home/dashboard page
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        navigate('/user/home', { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   const handleCaptchaChange = (data) => {
     setCaptcha(prev => ({
@@ -33,10 +44,10 @@ const Login = () => {
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
 
     const res = await login(email, password, captcha.answer, captcha.token);
-    setLoading(false);
+    setSubmitting(false);
 
     if (res.success) {
       if (res.user.role === 'admin') {
@@ -53,6 +64,14 @@ const Login = () => {
       }
     }
   };
+
+  if (loading) {
+    return (
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Spinner animation="border" variant="primary" />
+      </Container>
+    );
+  }
 
   return (
     <Container className="d-flex justify-content-center align-items-center py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
@@ -120,9 +139,9 @@ const Login = () => {
           <Button 
             type="submit" 
             className="btn-grad w-100 py-3 mt-2" 
-            disabled={loading}
+            disabled={submitting}
           >
-            {loading ? 'Validating credentials...' : 'Access Dashboard'}
+            {submitting ? 'Validating credentials...' : 'Access Dashboard'}
           </Button>
         </Form>
 

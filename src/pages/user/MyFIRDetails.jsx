@@ -8,6 +8,14 @@ const MyFIRDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const backendBase = apiURL.replace(/\/api$/, '');
+    return `${backendBase}${url}`;
+  };
+
   const [fir, setFir] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -273,13 +281,13 @@ const MyFIRDetails = () => {
                     {fir.images.map((imgUrl, idx) => (
                       <a 
                         key={idx} 
-                        href={`http://localhost:5000${imgUrl}`} 
+                        href={getImageUrl(imgUrl)} 
                         target="_blank" 
                         rel="noreferrer"
                         className="hover-zoom"
                       >
                         <img
-                          src={`http://localhost:5000${imgUrl}`}
+                          src={getImageUrl(imgUrl)}
                           alt={`Evidence ${idx + 1}`}
                           className="rounded border border-secondary"
                           style={{ width: '150px', height: '150px', objectFit: 'cover' }}

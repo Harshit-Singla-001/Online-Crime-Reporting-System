@@ -6,7 +6,7 @@ import AppFooter from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Auth Pages
-import Login from './pages/auth/Login';
+import Login from './pages/Login';
 import SignupStep1 from './pages/auth/SignupStep1';
 import VerifyOTP from './pages/auth/VerifyOTP';
 import CompleteSignup from './pages/auth/CompleteSignup';
@@ -74,12 +74,10 @@ function App() {
           <main className="flex-grow-1">
             <Routes>
               {/* Root and Convenience Routes */}
-              <Route path="/" element={<RootRedirect />} />
-              <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Navigate to="/" replace />} />
+              <Route path="/auth/login" element={<Navigate to="/" replace />} />
               <Route path="/signup" element={<Navigate to="/auth/signup" replace />} />
-
-              {/* Authentication Routes */}
-              <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/signup" element={<SignupStep1 />} />
               <Route path="/auth/verify-otp" element={<VerifyOTP />} />
               <Route path="/auth/complete-signup" element={<CompleteSignup />} />

@@ -25,7 +25,7 @@ const AppNavbar = () => {
   const handleLogout = async () => {
     const res = await logout();
     if (res.success) {
-      navigate('/auth/login');
+      navigate('/');
     }
   };
 
@@ -105,7 +105,7 @@ const AppNavbar = () => {
                 </NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <Link to="/auth/login" className="btn-grad text-white px-4 py-2 border-0 rounded-2 text-decoration-none d-inline-flex align-items-center justify-content-center" style={{ color: '#ffffff' }}>
+              <Link to="/" className="btn-grad text-white px-4 py-2 border-0 rounded-2 text-decoration-none d-inline-flex align-items-center justify-content-center" style={{ color: '#ffffff' }}>
                 Log In
               </Link>
             )}

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Card, Form, Button, Alert, Row, Col, Spinner } from 'react-bootstrap';
 import { RiUser3Line, RiLock2Line, RiCalendarLine, RiSmartphoneLine, RiMailLine, RiRoadMapLine, RiShieldUserLine } from 'react-icons/ri';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
+  const { setUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -140,6 +142,14 @@ const Profile = () => {
         pan_number: response.data.user.pan_number,
         profile_edited: response.data.user.profile_edited,
         updated_at: response.data.user.updated_at
+      }));
+      setUser(prev => ({
+        ...prev,
+        full_name: response.data.user.full_name,
+        phone_number: response.data.user.phone_number,
+        address: response.data.user.address,
+        dob: response.data.user.dob,
+        aadhaar_number: response.data.user.aadhaar_number
       }));
       setSuccess('Profile updated successfully! Editing has been permanently locked.');
       setIsEditing(false);

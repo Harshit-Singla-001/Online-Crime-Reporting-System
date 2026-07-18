@@ -52,7 +52,7 @@ const ForgotPassword = () => {
     <Container className="d-flex justify-content-center align-items-center py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
       <div className="crs-card p-4 p-md-5" style={{ maxWidth: '520px', width: '100%' }}>
         <div className="mb-3 text-start">
-          <Link to="/auth/login" className="text-decoration-none d-flex align-items-center gap-1" style={{ color: 'var(--color-secondary)', fontSize: '0.9rem' }}>
+          <Link to="/" className="text-decoration-none d-flex align-items-center gap-1" style={{ color: 'var(--color-secondary)', fontSize: '0.9rem' }}>
             <RiArrowLeftLine /> Back to Login
           </Link>
         </div>

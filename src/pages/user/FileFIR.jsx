@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Form, Button, Alert, Row, Col, Card } from 'react-bootstrap';
 import { RiFileAddLine, RiMapPinLine, RiImageAddLine, RiCheckLine, RiEdit2Line, RiErrorWarningLine } from 'react-icons/ri';
+import { useAuth } from '../../context/AuthContext';
 
 const FileFIR = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Mode: 'form' (editing fields) or 'review' (previewing details before submit)
   const [mode, setMode] = useState('form');
@@ -36,6 +38,48 @@ const FileFIR = () => {
   const [loading, setLoading] = useState(false);
 
   const [firSubmissionDisabled, setFirSubmissionDisabled] = useState(false);
+  const [draftToRestore, setDraftToRestore] = useState(null);
+  const [draftSavedMessage, setDraftSavedMessage] = useState('');
+
+  // Check for saved draft on mount
+  useEffect(() => {
+    if (user?._id) {
+      const savedDraft = localStorage.getItem(`fir_draft_${user._id}`);
+      if (savedDraft) {
+        try {
+          const parsed = JSON.parse(savedDraft);
+          setDraftToRestore(parsed);
+        } catch (e) {
+          console.error("Failed to parse saved draft", e);
+        }
+      }
+    }
+  }, [user]);
+
+  const handleSaveDraft = () => {
+    if (user?._id) {
+      localStorage.setItem(`fir_draft_${user._id}`, JSON.stringify(formData));
+      setDraftSavedMessage(`Draft successfully saved at ${new Date().toLocaleTimeString()}`);
+      setTimeout(() => setDraftSavedMessage(''), 5000);
+    }
+  };
+
+  const handleRestoreDraft = () => {
+    if (draftToRestore) {
+      setFormData(prev => ({
+        ...prev,
+        ...draftToRestore
+      }));
+      setDraftToRestore(null);
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    if (user?._id) {
+      localStorage.removeItem(`fir_draft_${user._id}`);
+      setDraftToRestore(null);
+    }
+  };
 
   useEffect(() => {
     const checkSettings = async () => {
@@ -213,6 +257,9 @@ const FileFIR = () => {
       });
 
       setLoading(false);
+      if (user?._id) {
+        localStorage.removeItem(`fir_draft_${user._id}`);
+      }
       navigate('/user/fir/my-firs', {
         state: {
           successMessage: `Your fir ${formData.title} is filed and currently in pending to review`
@@ -223,6 +270,27 @@ const FileFIR = () => {
       setError(err.response?.data?.message || 'Failed to submit FIR. Please check your inputs.');
     }
   };
+
+  const hasIncompleteProfile = user && user.role === 'user' && (!user.dob || !user.address || !user.aadhaar_number);
+
+  if (hasIncompleteProfile) {
+    return (
+      <Container className="py-5 animate-fade-in" style={{ minHeight: '80vh' }}>
+        <div className="crs-card p-4 p-md-5 mx-auto text-center" style={{ maxWidth: '640px' }}>
+          <RiErrorWarningLine size={48} className="text-warning mb-3 animate-pulse" />
+          <h3 className="text-light fw-bold mb-2">Incomplete Profile Details</h3>
+          <p className="text-muted mb-4" style={{ lineHeight: '1.6' }}>
+            To file an official First Information Report (FIR), you must complete your demographic details (Date of Birth, Residential Address, and Aadhaar Card details) first.
+          </p>
+          <div className="d-flex justify-content-center">
+            <Link to="/user/pages/profile" className="btn btn-grad text-white px-4 py-2 border-0 rounded-2 text-decoration-none" style={{ fontWeight: '600' }}>
+              Go to Profile
+            </Link>
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   if (mode === 'review') {
     return (
@@ -351,6 +419,24 @@ const FileFIR = () => {
           <Alert variant="danger" className="d-flex align-items-center gap-2 mb-4">
             <RiErrorWarningLine size={20} className="flex-shrink-0" />
             <span>This feature is temporarily turned off by the admin. You cannot file a new FIR at this moment.</span>
+          </Alert>
+        )}
+
+        {draftToRestore && (
+          <Alert variant="info" className="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4" style={{ background: 'rgba(0, 210, 255, 0.1)', borderColor: 'var(--border-glass)' }}>
+            <div>
+              <strong>Saved Draft Found:</strong> You have a draft from your last session. Would you like to restore it?
+            </div>
+            <div className="d-flex gap-2">
+              <Button size="sm" variant="info" className="text-white border-0" onClick={handleRestoreDraft}>Restore Draft</Button>
+              <Button size="sm" variant="outline-light" onClick={handleDiscardDraft}>Discard</Button>
+            </div>
+          </Alert>
+        )}
+
+        {draftSavedMessage && (
+          <Alert variant="success" className="mb-4">
+            {draftSavedMessage}
           </Alert>
         )}
 
@@ -595,13 +681,23 @@ const FileFIR = () => {
             />
           </Form.Group>
 
-          <Button 
-            type="submit" 
-            className="btn-grad w-100 py-3 mt-3"
-            disabled={firSubmissionDisabled}
-          >
-            Review Report & Proceed
-          </Button>
+          <div className="d-flex gap-3 mt-3">
+            <Button
+              type="button"
+              variant="outline-secondary"
+              className="py-3 flex-grow-1"
+              onClick={handleSaveDraft}
+            >
+              Save as Draft
+            </Button>
+            <Button 
+              type="submit" 
+              className="btn-grad py-3 flex-grow-1"
+              disabled={firSubmissionDisabled}
+            >
+              Review Report & Proceed
+            </Button>
+          </div>
         </Form>
       </div>
     </Container>

@@ -91,10 +91,10 @@ exports.signupStep1 = async (req, res) => {
       return res.status(403).json({ message: 'User registration is temporarily disabled by the administrator.' });
     }
 
-    const { full_name, dob, address, phone_number, email } = req.body;
+    const { full_name, phone_number, email } = req.body;
 
-    if (!full_name || !dob || !address || !phone_number || !email) {
-      return res.status(400).json({ message: 'All fields are required' });
+    if (!full_name || !phone_number || !email) {
+      return res.status(400).json({ message: 'Full name, phone number, and email are required' });
     }
 
     // Name validation: Only alphabetic characters and spaces
@@ -121,40 +121,6 @@ exports.signupStep1 = async (req, res) => {
       return res.status(400).json({ message: 'This email is already registered.' });
     }
 
-    const age = calculateAge(dob);
-    if (age < 13) {
-      return res.status(400).json({ message: 'You must be at least 13 years old to register.' });
-    }
-
-    let aadhaar_number = req.body.aadhaar_number;
-    let pan_number = req.body.pan_number;
-
-    if (!aadhaar_number) {
-      return res.status(400).json({ message: 'Aadhaar number is required.' });
-    }
-
-    // Aadhaar validation: Exactly 12 numeric digits
-    const aadhaarRegex = /^\d{12}$/;
-    if (!aadhaarRegex.test(aadhaar_number)) {
-      return res.status(400).json({ message: 'Aadhaar number must be exactly 12 numeric digits.' });
-    }
-
-    // Check if Aadhaar number already exists
-    const existingAadhaar = await User.findOne({ aadhaar_number });
-    if (existingAadhaar) {
-      return res.status(400).json({ message: 'This Aadhaar number is already registered.' });
-    }
-
-    // PAN validation if age >= 18
-    if (age >= 18 && pan_number) {
-      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-      if (!panRegex.test(pan_number.toUpperCase())) {
-        return res.status(400).json({ message: 'PAN Card number must be in a valid format (e.g. ABCDE1234F).' });
-      }
-    }
-
-
-
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -168,14 +134,9 @@ exports.signupStep1 = async (req, res) => {
     // Sign a temporary token containing step 1 data and the otp
     const signupData = {
       full_name,
-      dob,
-      address,
       phone_number,
       email,
-      aadhaar_number,
-      pan_number: age >= 18 ? (pan_number || null) : null,
-      otp,
-      age
+      otp
     };
 
     const signupToken = jwt.sign(signupData, process.env.JWT_SECRET, { expiresIn: '10m' });
@@ -264,9 +225,11 @@ exports.completeSignup = async (req, res) => {
     }
 
     // Check if Aadhaar number was registered in the meantime
-    const checkAadhaar = await User.findOne({ aadhaar_number: decoded.aadhaar_number });
-    if (checkAadhaar) {
-      return res.status(400).json({ message: 'Aadhaar number already registered.' });
+    if (decoded.aadhaar_number) {
+      const checkAadhaar = await User.findOne({ aadhaar_number: decoded.aadhaar_number });
+      if (checkAadhaar) {
+        return res.status(400).json({ message: 'Aadhaar number already registered.' });
+      }
     }
 
     // Generate Recovery Words
@@ -280,10 +243,10 @@ exports.completeSignup = async (req, res) => {
     // Create User
     const newUser = await User.create({
       full_name: decoded.full_name,
-      dob: new Date(decoded.dob),
-      aadhaar_number: decoded.aadhaar_number,
-      pan_number: decoded.pan_number,
-      address: decoded.address,
+      dob: decoded.dob ? new Date(decoded.dob) : null,
+      aadhaar_number: decoded.aadhaar_number || null,
+      pan_number: decoded.pan_number || null,
+      address: decoded.address || null,
       phone_number: decoded.phone_number,
       email: decoded.email,
       password_hash,
@@ -314,7 +277,10 @@ exports.completeSignup = async (req, res) => {
         _id: newUser._id,
         full_name: newUser.full_name,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
+        dob: newUser.dob || null,
+        address: newUser.address || null,
+        aadhaar_number: newUser.aadhaar_number || null
       }
     });
   } catch (error) {
@@ -420,7 +386,10 @@ exports.login = async (req, res) => {
         _id: account._id,
         full_name: account.full_name,
         email: account.email,
-        role: account.role
+        role: account.role,
+        dob: account.dob || null,
+        address: account.address || null,
+        aadhaar_number: account.aadhaar_number || null
       }
     });
   } catch (error) {
@@ -647,7 +616,10 @@ exports.me = async (req, res) => {
       _id: user._id,
       full_name: user.full_name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      dob: user.dob || null,
+      address: user.address || null,
+      aadhaar_number: user.aadhaar_number || null
     });
   } catch (error) {
     res.status(500).json({ message: 'Failed to check current session', error: error.message });

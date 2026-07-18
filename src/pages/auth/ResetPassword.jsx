@@ -62,7 +62,7 @@ const ResetPassword = () => {
       setSuccess('Password reset successful. Redirecting to login...');
       
       setTimeout(() => {
-        navigate('/auth/login');
+        navigate('/');
       }, 3000);
     } catch (err) {
       setLoading(false);

@@ -73,7 +73,7 @@ const SiteSettings = () => {
       // Wait 1.5 seconds, then logout and navigate to login
       setTimeout(async () => {
         await logout();
-        navigate('/auth/login');
+        navigate('/');
       }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update settings.');

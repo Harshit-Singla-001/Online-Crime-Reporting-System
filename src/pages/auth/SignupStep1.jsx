@@ -99,44 +99,12 @@ const SignupStep1 = () => {
       return;
     }
 
-    // Age validation: Must be at least 13
-    if (age < 13) {
-      setError('You must be at least 13 years old to register.');
-      setLoading(false);
-      return;
-    }
-
-    // Aadhaar validation: Exactly 12 numeric digits
-    const aadhaarRegex = /^\d{12}$/;
-    if (!aadhaarRegex.test(formData.aadhaar_number)) {
-      setError('Aadhaar number must be exactly 12 numeric digits.');
-      setLoading(false);
-      return;
-    }
-
-    // PAN validation if age >= 18
-    if (age >= 18 && formData.pan_number) {
-      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-      if (!panRegex.test(formData.pan_number.toUpperCase())) {
-        setError('PAN Card number must be in a valid format (e.g. ABCDE1234F).');
-        setLoading(false);
-        return;
-      }
-    }
-
     try {
       const submitData = {
         full_name: formData.full_name,
-        dob: formData.dob,
-        address: formData.address,
         phone_number: formData.phone_number,
-        email: formData.email,
-        aadhaar_number: formData.aadhaar_number,
+        email: formData.email
       };
-
-      if (age >= 18 && formData.pan_number) {
-        submitData.pan_number = formData.pan_number;
-      }
 
       const response = await axios.post('/auth/signup', submitData);
       
@@ -175,7 +143,7 @@ const SignupStep1 = () => {
 
         <Form onSubmit={handleSubmit}>
           <Row>
-            <Col md={6}>
+            <Col md={12}>
               <Form.Group className="form-group-custom">
                 <Form.Label className="form-label-custom">Full Name</Form.Label>
                 <InputGroup>
@@ -195,47 +163,7 @@ const SignupStep1 = () => {
                 </InputGroup>
               </Form.Group>
             </Col>
-
-            <Col md={6}>
-              <Form.Group className="form-group-custom">
-                <Form.Label className="form-label-custom">Date of Birth</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text style={{ background: 'var(--bg-input)', borderColor: 'var(--border-glass)', color: 'var(--color-text-muted)' }}>
-                    <RiCalendarLine />
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    className="input-custom"
-                    required
-                    readOnly={isEmailOnlyMode}
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
           </Row>
-
-          <Form.Group className="form-group-custom">
-            <Form.Label className="form-label-custom">Permanent Address</Form.Label>
-            <div className="d-flex">
-              <span className="input-group-text px-3 rounded-start" style={{ background: 'var(--bg-input)', borderColor: 'var(--border-glass)', color: 'var(--color-text-muted)', borderRight: '0' }}>
-                <RiRoadMapLine />
-              </span>
-              <Form.Control
-                as="textarea"
-                rows={2}
-                name="address"
-                placeholder="e.g. 123 Main St, New Delhi"
-                value={formData.address}
-                onChange={handleChange}
-                className="input-custom rounded-start-0"
-                required
-                readOnly={isEmailOnlyMode}
-              />
-            </div>
-          </Form.Group>
 
           <Row>
             <Col md={6}>
@@ -280,41 +208,6 @@ const SignupStep1 = () => {
             </Col>
           </Row>
 
-          <Row>
-            <Col md={age >= 18 ? 6 : 12}>
-              <Form.Group className="form-group-custom">
-                <Form.Label className="form-label-custom">Aadhaar Card Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="aadhaar_number"
-                  placeholder="e.g. 123456789012"
-                  value={formData.aadhaar_number}
-                  onChange={handleChange}
-                  className="input-custom"
-                  required
-                  readOnly={isEmailOnlyMode}
-                />
-              </Form.Group>
-            </Col>
-
-            {age >= 18 && (
-              <Col md={6}>
-                <Form.Group className="form-group-custom">
-                  <Form.Label className="form-label-custom">PAN Card Number</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="pan_number"
-                    placeholder="e.g. ABCDE1234F"
-                    value={formData.pan_number}
-                    onChange={handleChange}
-                    className="input-custom"
-                    readOnly={isEmailOnlyMode}
-                  />
-                </Form.Group>
-              </Col>
-            )}
-          </Row>
-
           <Button 
             type="submit" 
             className="btn-grad w-100 py-3 mt-3"
@@ -327,7 +220,7 @@ const SignupStep1 = () => {
         <div className="text-center mt-4">
           <p className="text-muted mb-0">
             Already have an account?{' '}
-            <Link to="/auth/login" style={{ color: 'var(--color-secondary)', textDecoration: 'none', fontWeight: '500' }}>
+            <Link to="/" style={{ color: 'var(--color-secondary)', textDecoration: 'none', fontWeight: '500' }}>
               Log In
             </Link>
           </p>
