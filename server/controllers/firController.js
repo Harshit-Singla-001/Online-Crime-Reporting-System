@@ -42,17 +42,15 @@ async function uploadToFreeImage(filePath) {
     const base64Data = fs.readFileSync(filePath, { encoding: 'base64' });
     const apiKey = process.env.FREEIMAGE_API_KEY || '6d207e02198a847aa98d0a2a901485a5';
     
+    const params = new URLSearchParams();
+    params.append('key', apiKey);
+    params.append('action', 'upload');
+    params.append('source', base64Data);
+    params.append('format', 'json');
+
     const response = await fetch('https://freeimage.host/api/1/upload', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        key: apiKey,
-        action: 'upload',
-        source: base64Data,
-        format: 'json'
-      })
+      body: params
     });
     
     const result = await response.json();

@@ -16,6 +16,18 @@ const AdminFIRDetails = () => {
     return `${backendBase}${url}`;
   };
 
+  const calculateAge = (dobString) => {
+    if (!dobString) return 0;
+    const birthDate = new Date(dobString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const [fir, setFir] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -160,7 +172,9 @@ const AdminFIRDetails = () => {
                 </Col>
                 <Col md={6}>
                   <p className="text-muted mb-1" style={{ fontSize: '0.8rem' }}>PAN CARD NUMBER</p>
-                  <p className="text-light fw-bold mb-0">{fir.user_id.pan_number || 'N/A (< 18)'}</p>
+                  <p className="text-light fw-bold mb-0">
+                    {fir.user_id.pan_number || (calculateAge(fir.user_id.dob) < 18 ? 'N/A (< 18)' : 'N/A')}
+                  </p>
                 </Col>
                 <Col md={12}>
                   <p className="text-muted mb-1" style={{ fontSize: '0.8rem' }}>PERMANENT ADDRESS</p>

@@ -243,10 +243,10 @@ exports.completeSignup = async (req, res) => {
     // Create User
     const newUser = await User.create({
       full_name: decoded.full_name,
-      dob: decoded.dob ? new Date(decoded.dob) : null,
-      aadhaar_number: decoded.aadhaar_number || null,
-      pan_number: decoded.pan_number || null,
-      address: decoded.address || null,
+      dob: decoded.dob ? new Date(decoded.dob) : undefined,
+      aadhaar_number: decoded.aadhaar_number || undefined,
+      pan_number: decoded.pan_number || undefined,
+      address: decoded.address || undefined,
       phone_number: decoded.phone_number,
       email: decoded.email,
       password_hash,

@@ -17,6 +17,12 @@ app.set('trust proxy', 1);
 
 // Connect to Database
 connectDB().then(() => {
+  // Self-heal: Unset null Aadhaar values to make sparse unique index work correctly
+  const User = require('./models/User');
+  User.updateMany({ aadhaar_number: null }, { $unset: { aadhaar_number: 1 } })
+    .then(res => console.log(`[Database Self-Heal] Unset null Aadhaar for ${res.modifiedCount} documents`))
+    .catch(err => console.error('[Database Self-Heal] Failed to unset null Aadhaar:', err.message));
+
   // Seed initial Admin accounts if empty
   seedAdmin().then(() => {
     // Seed initial sample data if empty

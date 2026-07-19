@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { Container, Row, Col, Card, Form, Button, InputGroup, Alert, Spinner } from 'react-bootstrap';
-import { RiSearchLine, RiThumbUpLine, RiThumbDownLine, RiBookOpenLine, RiFolderInfoLine } from 'react-icons/ri';
+import { RiSearchLine, RiThumbUpLine, RiBookOpenLine, RiFolderInfoLine } from 'react-icons/ri';
 
 const SafetyTips = () => {
   const { user } = useAuth();
@@ -227,7 +227,6 @@ const SafetyTips = () => {
                           >
                             {isExpanded ? 'See Less' : 'See More'}
                           </Button>
-                          
                           {isExpanded && user && (
                             <div className="d-flex gap-2">
                               <Button 
@@ -237,14 +236,6 @@ const SafetyTips = () => {
                                 className="d-flex align-items-center gap-1"
                               >
                                 <RiThumbUpLine /> Like
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant={userVote === 'dislike' && isHighlighted ? 'danger' : 'outline-secondary'}
-                                onClick={(e) => { e.stopPropagation(); handleVote(tip._id, 'dislike'); }}
-                                className="d-flex align-items-center gap-1"
-                              >
-                                <RiThumbDownLine /> Dislike
                               </Button>
                             </div>
                           )}

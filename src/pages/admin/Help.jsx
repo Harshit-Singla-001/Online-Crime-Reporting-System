@@ -56,7 +56,7 @@ const Help = () => {
             </h4>
 
             <Accordion defaultActiveKey="0" className="crs-accordion-custom">
-              <Accordion.Item eventKey="0" style={{ background: 'transparent', borderBottom: '1px solid var(--border-glass)' }}>
+              <Accordion.Item eventKey="0" style={{ background: 'transparent', border: '0', borderBottom: '1px solid var(--border-glass)' }}>
                 <Accordion.Header className="text-light py-2">
                   <span className="text-light fw-bold">How does the auto-unblock system work?</span>
                 </Accordion.Header>
@@ -65,7 +65,7 @@ const Help = () => {
                 </Accordion.Body>
               </Accordion.Item>
 
-              <Accordion.Item eventKey="1" style={{ background: 'transparent', borderBottom: '1px solid var(--border-glass)' }}>
+              <Accordion.Item eventKey="1" style={{ background: 'transparent', border: '0', borderBottom: '1px solid var(--border-glass)' }}>
                 <Accordion.Header className="text-light py-2">
                   <span className="text-light fw-bold">Are email updates automatically sent to citizens?</span>
                 </Accordion.Header>
@@ -74,7 +74,7 @@ const Help = () => {
                 </Accordion.Body>
               </Accordion.Item>
 
-              <Accordion.Item eventKey="2" style={{ background: 'transparent', borderBottom: '1px solid var(--border-glass)' }}>
+              <Accordion.Item eventKey="2" style={{ background: 'transparent', border: '0', borderBottom: '1px solid var(--border-glass)' }}>
                 <Accordion.Header className="text-light py-2">
                   <span className="text-light fw-bold">Where are submitted case evidence attachments saved?</span>
                 </Accordion.Header>

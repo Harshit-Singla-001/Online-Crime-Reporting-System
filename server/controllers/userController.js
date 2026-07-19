@@ -67,6 +67,15 @@ exports.editProfile = async (req, res) => {
       return res.status(400).json({ message: 'Aadhaar number must be exactly 12 numeric digits.' });
     }
 
+    // Check if Aadhaar is already registered by another citizen
+    const existingAadhaarUser = await User.findOne({ 
+      aadhaar_number, 
+      _id: { $ne: req.user._id } 
+    });
+    if (existingAadhaarUser) {
+      return res.status(400).json({ message: 'This Aadhaar number is already registered by another citizen.' });
+    }
+
     // PAN validation
     if (pan_number) {
       const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;

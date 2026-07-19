@@ -42,11 +42,11 @@ const Profile = () => {
       const response = await axios.get('/user/profile');
       setProfile(response.data);
       setEditForm({
-        full_name: response.data.full_name,
-        phone_number: response.data.phone_number,
-        address: response.data.address,
+        full_name: response.data.full_name || '',
+        phone_number: response.data.phone_number || '',
+        address: response.data.address || '',
         dob: response.data.dob ? response.data.dob.split('T')[0] : '',
-        aadhaar_number: response.data.aadhaar_number,
+        aadhaar_number: response.data.aadhaar_number || '',
         pan_number: response.data.pan_number || ''
       });
     } catch (err) {
@@ -156,7 +156,9 @@ const Profile = () => {
       setSaveLoading(false);
     } catch (err) {
       setSaveLoading(false);
-      setError(err.response?.data?.message || 'Failed to update profile.');
+      const details = err.response?.data?.error;
+      const msg = err.response?.data?.message || 'Failed to update profile.';
+      setError(details ? `${msg} (Details: ${details})` : msg);
     }
   };
 
@@ -168,7 +170,7 @@ const Profile = () => {
     );
   }
 
-  if (error || !profile) {
+  if (!profile) {
     return (
       <Container className="py-5" style={{ minHeight: '80vh' }}>
         <Alert variant="danger">{error || 'Could not find user profile.'}</Alert>

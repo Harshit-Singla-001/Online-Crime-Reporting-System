@@ -121,15 +121,8 @@ const Home = () => {
 
       {/* Announcement Section */}
       <div className="mb-4">
-        <Alert variant="info" className="d-flex align-items-center gap-2 py-3 border-0 shadow-sm mb-3" style={{ background: 'var(--grad-alert)' }}>
-          <span className="geo-dot"></span>
-          <span className="text-light" style={{ fontSize: '0.9rem', fontWeight: '500' }}>
-            <strong>System Update:</strong> OCRS citizen portal is fully active. Live location tracking and OTP email verifications are online.
-          </span>
-        </Alert>
-
         {user && user.role === 'user' && (!user.dob || !user.address || !user.aadhaar_number) && (
-          <Alert variant="warning" className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between py-3 border-0 shadow-sm gap-3 mt-3" style={{ background: 'rgba(251, 191, 36, 0.1)', borderLeft: '4px solid var(--color-secondary)' }}>
+          <Alert variant="warning" className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between py-3 border-0 shadow-sm gap-3" style={{ background: 'rgba(251, 191, 36, 0.1)', borderLeft: '4px solid var(--color-secondary)' }}>
             <div className="d-flex align-items-center gap-2">
               <span className="geo-dot" style={{ background: 'var(--color-secondary)' }}></span>
               <span className="text-light" style={{ fontSize: '0.95rem', fontWeight: '500' }}>

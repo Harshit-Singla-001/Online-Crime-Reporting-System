@@ -302,6 +302,12 @@ const FileFIR = () => {
             <p className="text-muted">Double-check details before publishing to official registry</p>
           </div>
 
+          {draftSavedMessage && (
+            <Alert variant="success" className="mb-4">
+              {draftSavedMessage}
+            </Alert>
+          )}
+
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Row className="gy-3 mb-4">
@@ -364,13 +370,14 @@ const FileFIR = () => {
                 <span className="text-muted d-block mb-2" style={{ fontSize: '0.85rem' }}>ATTACHED EVIDENCE (IMAGES)</span>
                 <div className="d-flex gap-3">
                   {imagePreviews.map((url, idx) => (
-                    <img
-                      key={idx}
-                      src={url}
-                      alt={`Preview ${idx + 1}`}
-                      className="rounded border border-secondary"
-                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                    />
+                    <a key={idx} href={url} target="_blank" rel="noreferrer">
+                      <img
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        className="rounded border border-secondary hover-zoom"
+                        style={{ width: '100px', height: '100px', objectFit: 'cover', cursor: 'pointer' }}
+                      />
+                    </a>
                   ))}
                 </div>
               </Col>
@@ -393,7 +400,16 @@ const FileFIR = () => {
             >
               <RiEdit2Line className="me-1" /> Edit Report
             </Button>
-             <Button 
+            <Button
+              type="button"
+              variant="outline-info"
+              onClick={handleSaveDraft}
+              className="flex-grow-1 py-3"
+              disabled={loading}
+            >
+              Save as Draft
+            </Button>
+            <Button 
               onClick={handleFinalConfirm} 
               className="btn-grad flex-grow-1 py-3"
               disabled={loading || firSubmissionDisabled}
