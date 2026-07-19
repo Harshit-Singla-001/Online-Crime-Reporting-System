@@ -439,4 +439,42 @@ body {
   display: none !important;
 }
 
+/* Floating Mobile Profile Dropdown & Toggler Styles */
+.navbar-toggler {
+  border-color: var(--border-glass) !important;
+  padding: 6px 10px !important;
+  border-radius: var(--radius-md) !important;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-glass .dropdown {
+    position: relative !important;
+  }
+  .navbar-glass #avatar-dropdown .dropdown-menu {
+    position: absolute !important;
+    right: 0 !important;
+    left: auto !important;
+    float: none !important;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-glass) !important;
+    box-shadow: var(--shadow-premium) !important;
+    min-width: 160px !important;
+    border-radius: var(--radius-md) !important;
+    padding: 8px 0 !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+}
+
+/* Date and Time Picker Indicators Visibility in Dark Theme */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) brightness(1.5) contrast(1.2);
+  cursor: pointer;
+}
+
+.light-theme input[type="date"]::-webkit-calendar-picker-indicator,
+.light-theme input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
 
