@@ -39,7 +39,12 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    if (!captcha.answer) {
+    if (!email.trim() || !password.trim()) {
+      setError('Please fill in all details (email and password) first.');
+      return;
+    }
+
+    if (captcha.token !== 'DISABLED' && !captcha.answer.trim()) {
       setError('Please solve the CAPTCHA first.');
       return;
     }
@@ -84,7 +89,7 @@ const Login = () => {
 
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate>
           <Form.Group className="form-group-custom">
             <Form.Label className="form-label-custom">Email Address</Form.Label>
             <InputGroup>

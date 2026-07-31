@@ -123,6 +123,7 @@ const About = () => {
                   <li>Multi-language accessibility support</li>
                   <li>System maintenance toggle button</li>
                   <li>Dedicated portal to view citizen-reported FIR history</li>
+                  <li>Digilocker Aadhaar verification</li>
                 </ul>
               </Col>
             </Row>
