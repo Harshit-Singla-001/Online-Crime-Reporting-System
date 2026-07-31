@@ -272,6 +272,7 @@ exports.completeSignup = async (req, res) => {
 
     res.status(201).json({
       message: 'Signup completed successfully.',
+      token,
       recoveryWords, // Send to client for displaying once
       user: {
         _id: newUser._id,
@@ -382,6 +383,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful',
+      token,
       user: {
         _id: account._id,
         full_name: account.full_name,

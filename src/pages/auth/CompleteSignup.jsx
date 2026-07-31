@@ -92,6 +92,9 @@ const CompleteSignup = () => {
       
       // Save user data returned from backend for later login activation
       localStorage.setItem('temp_user', JSON.stringify(response.data.user));
+      if (response.data.token) {
+        localStorage.setItem('temp_token', response.data.token);
+      }
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.message || 'Failed to complete registration.');
@@ -107,9 +110,14 @@ const CompleteSignup = () => {
 
   const handleProceed = () => {
     const tempUser = localStorage.getItem('temp_user');
+    const tempToken = localStorage.getItem('temp_token');
     if (tempUser) {
+      if (tempToken) {
+        localStorage.setItem('token', tempToken);
+      }
       setUser(JSON.parse(tempUser));
       localStorage.removeItem('temp_user');
+      localStorage.removeItem('temp_token');
     }
     navigate('/user/home');
   };
