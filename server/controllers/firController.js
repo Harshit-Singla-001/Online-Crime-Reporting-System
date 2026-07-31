@@ -130,7 +130,9 @@ exports.fileFIR = (req, res) => {
       incidentDatetime.setMinutes(parseInt(minutes) || 0);
 
       const filingTime = new Date();
-      if (incidentDatetime >= filingTime) {
+      // Allow a buffer of 24 hours to prevent false future errors due to client-server timezone mismatch (e.g. server in UTC, client in IST)
+      const maxAllowedTime = new Date(filingTime.getTime() + 24 * 60 * 60 * 1000);
+      if (incidentDatetime > maxAllowedTime) {
         return res.status(400).json({ message: 'Crime incident date and time must be before the FIR filing time.' });
       }
 

@@ -122,11 +122,7 @@ function App() {
                   <SafetyTips />
                 </ProtectedRoute>
               } />
-              <Route path="/user/pages/about" element={
-                <ProtectedRoute allowedRoles={['user']}>
-                  <About />
-                </ProtectedRoute>
-              } />
+              <Route path="/user/pages/about" element={<About />} />
               <Route path="/user/pages/contact" element={
                 <ProtectedRoute allowedRoles={['user']}>
                   <Contact />
@@ -137,16 +133,8 @@ function App() {
                   <Profile />
                 </ProtectedRoute>
               } />
-              <Route path="/user/pages/privacy-policy" element={
-                <ProtectedRoute allowedRoles={['user']}>
-                  <PrivacyPolicy />
-                </ProtectedRoute>
-              } />
-              <Route path="/user/pages/terms-of-service" element={
-                <ProtectedRoute allowedRoles={['user']}>
-                  <TermsOfService />
-                </ProtectedRoute>
-              } />
+              <Route path="/user/pages/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/user/pages/terms-of-service" element={<TermsOfService />} />
 
               {/* Admin Protected Routes */}
               <Route path="/admin/dashboard" element={

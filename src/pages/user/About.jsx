@@ -124,6 +124,8 @@ const About = () => {
                   <li>System maintenance toggle button</li>
                   <li>Dedicated portal to view citizen-reported FIR history</li>
                   <li>Digilocker Aadhaar verification</li>
+                  <li>Voice-note attachments for hands-free incident description recording</li>
+                  <li>Interactive map selection to automatically resolve full address details</li>
                 </ul>
               </Col>
             </Row>

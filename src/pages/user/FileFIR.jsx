@@ -5,6 +5,15 @@ import { Container, Form, Button, Alert, Row, Col, Card } from 'react-bootstrap'
 import { RiFileAddLine, RiMapPinLine, RiImageAddLine, RiCheckLine, RiEdit2Line, RiErrorWarningLine } from 'react-icons/ri';
 import { useAuth } from '../../context/AuthContext';
 
+const formatLocalDate = (dateStr) => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dateStr;
+};
+
 const FileFIR = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -323,7 +332,7 @@ const FileFIR = () => {
             
             <Col md={6}>
               <span className="text-muted d-block" style={{ fontSize: '0.85rem' }}>INCIDENT SCHEDULE</span>
-              <strong className="text-light">{formData.incident_date} at {formData.incident_time}</strong>
+              <strong className="text-light">{formatLocalDate(formData.incident_date)} at {formData.incident_time}</strong>
             </Col>
             
             <Col xs={12}>
