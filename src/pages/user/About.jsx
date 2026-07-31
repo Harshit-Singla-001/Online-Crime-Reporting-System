@@ -115,6 +115,7 @@ const About = () => {
                   <li>Graphical representation of public FIR records by region</li>
                   <li>Activity logs for administrators and citizens</li>
                   <li>Ability to save reports (accessible from the profile dropdown)</li>
+                  <li>Digilocker Aadhaar verification</li>
                 </ul>
               </Col>
               <Col md={6}>
@@ -123,7 +124,6 @@ const About = () => {
                   <li>Multi-language accessibility support</li>
                   <li>System maintenance toggle button</li>
                   <li>Dedicated portal to view citizen-reported FIR history</li>
-                  <li>Digilocker Aadhaar verification</li>
                   <li>Voice-note attachments for hands-free incident description recording</li>
                   <li>Interactive map selection to automatically resolve full address details</li>
                 </ul>
