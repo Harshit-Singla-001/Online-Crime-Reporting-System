@@ -1,18 +1,5 @@
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 465,
-  secure: true, // true for 465, false for 587
-  family: 4,    // Force IPv4 to prevent ENETUNREACH/timeout issues on Render
-  auth: {
-    user: 'b16c21001@smtp-brevo.com',
-    pass: Buffer.from('eHNtdHBzaWItMTIxNGYyMzkwODkyNWRlY2IyZWZkODVlNzk0MWM2OTAyZmU5NjA0NGQxM2NkYTUxNmI1ODNjZmFlMTlhYzVjYy1MOWZBU2FobjlQeEppcGJV', 'base64').toString()
-  }
-});
-
 /**
- * Sends an email notification.
+ * Sends an email notification using Brevo HTTP API.
  * @param {string} to Recipient email address
  * @param {string} subject Email subject
  * @param {string} text Plain text content
@@ -25,18 +12,47 @@ const sendEmail = async (to, subject, text, html = '') => {
     return null;
   }
 
-  try {
-    const mailOptions = {
-      from: '"Online Crime Reporting System" <harshitsingla72@gmail.com>',
-      to,
-      subject,
-      text,
-      html: html || text.replace(/\n/g, '<br/>')
-    };
+  const apiKey = process.env.EMAIL_PASS;
+  if (!apiKey) {
+    console.error('Brevo API Key (EMAIL_PASS) is not defined in environment variables.');
+    return null;
+  }
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent successfully to ${to}. Message ID: ${info.messageId}`);
-    return info;
+  try {
+    const htmlContent = html || text.replace(/\n/g, '<br/>');
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: {
+          name: 'Online Crime Reporting System',
+          email: process.env.SENDER_EMAIL || 'harshitsingla72@gmail.com'
+        },
+        to: [
+          {
+            email: to
+          }
+        ],
+        subject: subject,
+        htmlContent: htmlContent,
+        textContent: text
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`Email sent successfully to ${to}. Message ID: ${data.messageId}`);
+      return data;
+    } else {
+      const errData = await response.json().catch(() => ({}));
+      console.error(`Brevo API Error (${response.status}):`, errData);
+      throw new Error(`Brevo HTTP error status ${response.status}`);
+    }
   } catch (error) {
     console.error(`Email Sending Failed to ${to}: ${error.message}`);
     // Log to console for development verification
