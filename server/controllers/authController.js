@@ -407,7 +407,10 @@ exports.forgotPassword = async (req, res) => {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await Staff.findOne({ email });
+    }
     if (!user) {
       return res.status(400).json({ message: 'This email is not registered.' });
     }
@@ -425,7 +428,10 @@ exports.forgotPassword = async (req, res) => {
 exports.forgotOtpRequest = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await Staff.findOne({ email });
+    }
     if (!user) {
       return res.status(400).json({ message: 'This email is not registered.' });
     }
@@ -475,7 +481,10 @@ exports.forgotOtpVerify = async (req, res) => {
 exports.forgotKeyRequest = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await Staff.findOne({ email });
+    }
     if (!user) {
       return res.status(400).json({ message: 'This email is not registered.' });
     }
@@ -526,7 +535,10 @@ exports.forgotKeyVerify = async (req, res) => {
       return res.status(400).json({ message: 'Session expired. Try again.' });
     }
 
-    const user = await User.findOne({ email: decoded.email });
+    let user = await User.findOne({ email: decoded.email });
+    if (!user) {
+      user = await Staff.findOne({ email: decoded.email });
+    }
     if (!user) {
       return res.status(400).json({ message: 'User not found.' });
     }
