@@ -519,7 +519,7 @@ exports.forgotKeyRequest = async (req, res) => {
     res.status(500).json({ message: 'Recovery key request failed', error: error.message });
   }
 };
-
+ 
 // 10. Forgot Password - Recovery Key Verify
 exports.forgotKeyVerify = async (req, res) => {
   try {
