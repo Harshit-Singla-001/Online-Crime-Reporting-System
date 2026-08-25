@@ -68,9 +68,12 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
         return { success: true, user: response.data.user };
       }
-      return { success: false, message: 'Invalid response from server' };
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed. Please check network.';
+      const message = error.response?.data?.message || (
+        !error.response 
+          ? 'Backend server is currently offline or unreachable. Please wait a moment and retry.' 
+          : 'Login failed. Please check network.'
+      );
       return { success: false, message };
     }
   };

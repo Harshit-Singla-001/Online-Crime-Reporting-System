@@ -478,3 +478,412 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   filter: none;
 }
 
+/* =========================================================
+   SERVER STATUS MONITORING & OFFLINE ALERT STYLES
+   ========================================================= */
+
+@keyframes glowPulseRed {
+  0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.9); }
+  100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
+}
+
+@keyframes glowPulseGreen {
+  0% { box-shadow: 0 0 4px rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.9); }
+  100% { box-shadow: 0 0 4px rgba(16, 185, 129, 0.4); }
+}
+
+@keyframes radarWave {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.4); opacity: 0.2; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes spinInfinite {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spinInfinite 1s linear infinite;
+  display: inline-block;
+}
+
+/* 1. Sticky Top Banner Container */
+.server-status-banner-container {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  width: 100%;
+}
+
+.server-status-banner {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.16) 0%, rgba(20, 26, 42, 0.96) 60%, rgba(30, 20, 35, 0.98) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.38);
+  box-shadow: 0 6px 25px rgba(239, 68, 68, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 10px 0;
+}
+
+.server-banner-content {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* Icon Pulse Box */
+.server-banner-icon-wrapper {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.server-icon-pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.25);
+  animation: radarWave 2s infinite ease-out;
+}
+
+.server-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Text Content */
+.server-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.server-banner-title {
+  color: #fee2e2;
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.2px;
+}
+
+.server-banner-desc {
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.server-banner-desc strong {
+  color: #fca5a5;
+}
+
+/* Badges */
+.server-badge-offline {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.server-badge-countdown {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Action Buttons */
+.server-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.server-retry-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.server-retry-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.5);
+}
+
+.server-retry-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.server-dismiss-btn {
+  background: rgba(255, 255, 255, 0.07);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.server-dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+}
+
+/* Status Dots */
+.server-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.server-status-dot.offline {
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+  animation: glowPulseRed 1.8s infinite;
+}
+
+.server-status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: glowPulseGreen 1.8s infinite;
+}
+
+/* 2. Floating Minimized Status Pill */
+.server-minimized-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1050;
+  background: rgba(18, 24, 38, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(239, 68, 68, 0.25);
+  display: flex;
+  align-items: center;
+  padding: 4px 6px 4px 14px;
+  gap: 8px;
+  transition: all var(--transition-normal);
+}
+
+.server-minimized-pill:hover {
+  transform: translateY(-3px);
+  border-color: rgba(239, 68, 68, 0.7);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(239, 68, 68, 0.35);
+}
+
+.server-pill-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.server-pill-text {
+  color: #fee2e2;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.server-pill-timer {
+  color: #fcd34d;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.server-pill-retry-btn {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.server-pill-retry-btn:hover:not(:disabled) {
+  background: #ef4444;
+  color: white;
+}
+
+/* 3. Connection Restored Toast */
+.server-restored-toast {
+  position: fixed;
+  top: 85px;
+  right: 24px;
+  z-index: 1060;
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(15, 23, 42, 0.96) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 18px rgba(16, 185, 129, 0.3);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 420px;
+}
+
+/* Light Mode Overrides for Server Status Alert */
+.light-theme .server-status-banner {
+  background: linear-gradient(135deg, rgba(254, 226, 226, 0.98) 0%, rgba(255, 241, 242, 0.98) 100%);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
+
+.light-theme .server-banner-title {
+  color: #991b1b;
+}
+
+.light-theme .server-banner-desc {
+  color: #475569;
+}
+
+.light-theme .server-banner-desc strong {
+  color: #b91c1c;
+}
+
+.light-theme .server-dismiss-btn {
+  background: rgba(15, 23, 42, 0.05);
+  color: #64748b;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+.light-theme .server-dismiss-btn:hover {
+  background: rgba(15, 23, 42, 0.1);
+  color: #0f172a;
+}
+
+.light-theme .server-minimized-pill {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15), 0 0 12px rgba(239, 68, 68, 0.15);
+}
+
+.light-theme .server-pill-text {
+  color: #991b1b;
+}
+
+.light-theme .server-pill-timer {
+  color: #b45309;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN (PC VS MOBILE)
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+  .server-banner-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 4px 14px;
+  }
+
+  .server-banner-text {
+    text-align: left;
+  }
+
+  .server-banner-title {
+    font-size: 0.92rem;
+  }
+
+  .server-banner-desc {
+    font-size: 0.79rem;
+    line-height: 1.4;
+  }
+
+  .server-banner-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .server-retry-btn {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 0.82rem;
+  }
+
+  .server-dismiss-btn {
+    padding: 9px 12px;
+  }
+
+  .server-minimized-pill {
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: max-content;
+  }
+
+  .server-minimized-pill:hover {
+    transform: translateX(-50%) translateY(-2px);
+  }
+
+  .server-restored-toast {
+    top: 75px;
+    left: 14px;
+    right: 14px;
+    max-width: calc(100% - 28px);
+  }
+}
+

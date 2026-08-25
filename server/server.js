@@ -58,6 +58,15 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
+// Health check endpoint for frontend connection monitoring
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: "ok", 
+    message: "Online Crime Reporting System backend is online", 
+    timestamp: new Date().toISOString() 
+  });
+});
+
 // Test SMTP route for diagnosing email connection issues
 app.get('/api/test-smtp', async (req, res) => {
   const nodemailer = require('nodemailer');

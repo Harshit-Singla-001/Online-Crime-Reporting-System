@@ -42,6 +42,9 @@ import ContactMessages from './pages/admin/ContactMessages';
 
 import { Spinner, Container } from 'react-bootstrap';
 
+import { ServerStatusProvider } from './context/ServerStatusContext';
+import ServerStatusAlert from './components/ServerStatusAlert';
+
 // Root Redirect Component
 const RootRedirect = () => {
   const { user, loading } = useAuth();
@@ -68,10 +71,12 @@ const RootRedirect = () => {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <div className="d-flex flex-column min-vh-100 bg-primary-dark">
-          <AppNavbar />
-          <main className="flex-grow-1">
+      <ServerStatusProvider>
+        <AuthProvider>
+          <div className="d-flex flex-column min-vh-100 bg-primary-dark">
+            <AppNavbar />
+            <ServerStatusAlert />
+            <main className="flex-grow-1">
             <Routes>
               {/* Root and Convenience Routes */}
               <Route path="/" element={<Login />} />
@@ -190,8 +195,9 @@ function App() {
           <AppFooter />
         </div>
       </AuthProvider>
-    </Router>
-  );
+    </ServerStatusProvider>
+  </Router>
+);
 }
 
 export default App;
