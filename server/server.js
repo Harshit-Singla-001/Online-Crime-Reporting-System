@@ -58,14 +58,22 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/public', publicRoutes);
 
-// Health check endpoint for frontend connection monitoring
-app.get('/api/health', (req, res) => {
+// Route aliases (without /api prefix) for flexibility
+app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
+app.use('/admin', adminRoutes);
+app.use('/public', publicRoutes);
+
+// Health check endpoints for frontend connection monitoring
+const healthHandler = (req, res) => {
   res.status(200).json({ 
     status: "ok", 
     message: "Online Crime Reporting System backend is online", 
     timestamp: new Date().toISOString() 
   });
-});
+};
+app.get('/api/health', healthHandler);
+app.get('/health', healthHandler);
 
 // Test SMTP route for diagnosing email connection issues
 app.get('/api/test-smtp', async (req, res) => {

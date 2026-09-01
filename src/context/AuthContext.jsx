@@ -2,7 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 // Configure Axios Defaults
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const rawApiURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').trim().replace(/\/+$/, '');
+axios.defaults.baseURL = rawApiURL.endsWith('/api') ? rawApiURL : `${rawApiURL}/api`;
 axios.defaults.withCredentials = true;
 
 // Add Axios Request Interceptor to attach the token if it exists in localStorage
